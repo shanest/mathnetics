@@ -1,0 +1,6 @@
+.button {
+	background-color: #ff8800;
+	background-image: url('buttons/bg_rounded.gif');
+	background-repeat: no-repeat;
+	margin: 2px;
+}

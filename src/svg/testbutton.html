@@ -1,0 +1,60 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="SceneButton.css"></link>
+<script type="text/javascript" src="../mathnetics.js"></script>
+<script type="text/javascript" src="../Vector.js"></script>
+<script type="text/javascript" src="../point3D.js"></script>
+<script type="text/javascript" src="../AffineTransform.js"></script>
+<script type="text/javascript" src="../Line.js"></script>
+<script type="text/javascript" src="../Plane.js"></script>
+<script type="text/javascript" src="Scene3D.js"></script>
+<script type="text/javascript" src="svg.js"></script>
+<script type="text/javascript" src="../Object3D.js"></script>
+<script type="text/javascript" src="SceneButton.js"></script>
+<script type="text/javascript">
+var c = mathnetics.Object3D.Cube(20, mathnetics.point3D.zero);
+var scene;
+var svg;
+
+function drawCube() {
+	if(svg) {
+		svg.clear();
+	}
+	//c.translate(2,2,2);
+	scene.draw([scene.objects[0]], {stroke: 'black', 'stroke-width': .25, transform: 'scale(1,-1)'});
+	scene.draw([scene.objects[1]], {stroke: 'red', 'stroke-width': .125, transform: 'scale(1,-1)'});
+	scene.draw([scene.objects[2]], {stroke: 'green', 'stroke-width': .125, transform: 'scale(1,-1)'});
+	scene.draw([scene.objects[3]], {stroke: 'blue', 'stroke-width': .125, transform: 'scale(1,-1)'});
+}
+
+mathnetics.util.onDOMReady(function() {
+
+	mathnetics.svg.attach(mathnetics.util.select("#cube"), {onLoad: function() {
+		svg = mathnetics.svg.get("cube");
+		svg.configure({viewBox: '-15 -15 30 30'});
+		scene = new mathnetics.svg.Scene3D([c], svg);
+		scene.addObject(mathnetics.Object3D.Xaxis(0, 10));
+		scene.addObject(mathnetics.Object3D.Yaxis(0, 10));
+		scene.addObject(mathnetics.Object3D.Zaxis(0, 10));
+		scene.rotateCamera(Math.PI/2, Math.PI/2);
+		drawCube();
+		mathnetics.svg.SceneButton.zoomIn(document.getElementById("button"), 'svg', 'scene', 15, "[{stroke: 'black', 'stroke-width': .25}, {stroke: 'red', 'stroke-width': .125}, {stroke: 'green', 'stroke-width': .125}, {stroke: 'blue', 'stroke-width': .125}]", false);
+		mathnetics.svg.SceneButton.zoomOut(document.getElementById("button"), 'svg', 'scene', 100, "[{stroke: 'black', 'stroke-width': .25}, {stroke: 'red', 'stroke-width': .125}, {stroke: 'green', 'stroke-width': .125}, {stroke: 'blue', 'stroke-width': .125}]", true);
+		mathnetics.svg.SceneButton.rotateZp(document.getElementById("button"), 'svg', 'scene', Math.PI/8, "[{stroke: 'black', 'stroke-width': .25}, {stroke: 'red', 'stroke-width': .125}, {stroke: 'green', 'stroke-width': .125}, {stroke: 'blue', 'stroke-width': .125}]", true);
+		mathnetics.svg.SceneButton.rotateZn(document.getElementById("button"), 'svg', 'scene', Math.PI/8, "[{stroke: 'black', 'stroke-width': .25}, {stroke: 'red', 'stroke-width': .125}, {stroke: 'green', 'stroke-width': .125}, {stroke: 'blue', 'stroke-width': .125}]", false);
+		mathnetics.svg.SceneButton.rotateXYp(document.getElementById("button"), 'svg', 'scene', Math.PI/8, "[{stroke: 'black', 'stroke-width': .25}, {stroke: 'red', 'stroke-width': .125}, {stroke: 'green', 'stroke-width': .125}, {stroke: 'blue', 'stroke-width': .125}]", false);
+		mathnetics.svg.SceneButton.rotateXYn(document.getElementById("button"), 'svg', 'scene', Math.PI/8, "[{stroke: 'black', 'stroke-width': .25}, {stroke: 'red', 'stroke-width': .125}, {stroke: 'green', 'stroke-width': .125}, {stroke: 'blue', 'stroke-width': .125}]", true);
+		mathnetics.svg.SceneButton.makeAll(document.getElementById("allbuttons"), 'svg', 'scene', 10, Math.PI/8, "[{stroke: 'black', 'stroke-width': .25}, {stroke: 'red', 'stroke-width': .125}, {stroke: 'green', 'stroke-width': .125}, {stroke: 'blue', 'stroke-width': .125}]", false);
+	//setInterval('drawCube()', 25);
+		}
+	});
+
+});
+</script>
+</head>
+<body>
+<p id="allbuttons" style="text-align: center">These buttons are created by makeAll function (all animate or all do not):<br /></p>
+<p id="button">These buttons are called individually (some animate, some do not):<br /></p>
+<div id="cube" style="width:600px;height:600px;"></div>
+</body>
+</html>

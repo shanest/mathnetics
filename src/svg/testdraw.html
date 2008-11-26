@@ -1,0 +1,69 @@
+<html>
+<head>
+<script type="text/javascript" src="../mathnetics.js"></script>
+<script type="text/javascript" src="../util/util.js"></script>
+<script type="text/javascript" src="../util/Element.js"></script>
+<script type="text/javascript" src="../Vector.js"></script>
+<script type="text/javascript" src="../AffineTransform.js"></script>
+<script type="text/javascript" src="../point3D.js"></script>
+<script type="text/javascript" src="../point2D.js"></script>
+<script type="text/javascript" src="../Plane.js"></script>
+<script type="text/javascript" src="../Line.js"></script>
+<script type="text/javascript" src="../Matrix.js"></script>
+<script type="text/javascript" src="svg.js"></script>
+<script type="text/javascript" src="../Object3D.js"></script>
+<script type="text/javascript" src="Scene3D.js"></script>
+<script type="text/javascript">
+var c = mathnetics.Object3D.Cube(20, mathnetics.point3D.zero);
+var scene;
+var svg;
+
+function drawCube() {
+	scene.emptySVG();
+	//c.translate(2,2,2);
+	scene.draw(scene.objects, [{stroke: 'black', 'stroke-width': .25}, {stroke: 'red', 'stroke-width': .125}, {stroke: 'green', 'stroke-width': .125}, {stroke: 'blue', 'stroke-width': .125}]);
+	scene.rotateCamera(scene.camera.theta + .1, scene.camera.phi + .1);
+}
+
+mathnetics.util.onDOMReady(function() {
+
+	mathnetics.svg.attach(mathnetics.util.select("#cube"), {onLoad: function() {
+	svg = mathnetics.svg.get("cube");
+	svg.configure({viewBox: '-15 -15 30 30'});
+	scene = new mathnetics.svg.Scene3D([c], svg);
+	alert(svg instanceof mathnetics.svg.SVGWrapper);
+	alert(scene);
+	scene.addObject(mathnetics.Object3D.Xaxis(0, 10));
+	scene.addObject(mathnetics.Object3D.Yaxis(0, 10));
+	scene.addObject(mathnetics.Object3D.Zaxis(0, 10));
+	scene.rotateCamera(Math.PI/2, Math.PI/2);
+	//drawCube();
+	setInterval('drawCube()', 25);
+}
+
+});
+
+});
+
+/*
+mathnetics.util.onDOMReady(function() {
+	alert(scene);
+	mathnetics.gfx.SVGDoc(mathnetics.util.select("#cube"),{initPath:''});
+	svg = mathnetics.gfx.SVG.get("cube");
+	alert(svg instanceof mathnetics.gfx.SVGWrapper);
+	svg.configure({viewBox: '-15 -15 30 30'});
+	scene.addObject(mathnetics.Object3D.Xaxis(0, 10));
+	scene.addObject(mathnetics.Object3D.Yaxis(0, 10));
+	scene.addObject(mathnetics.Object3D.Zaxis(0, 10));
+	scene.rotateCamera(Math.PI/2, Math.PI/2);
+	//drawCube();
+	setInterval('drawCube()', 25);
+});
+*/
+</script>
+</head>
+<body>
+<p id="button"></p>
+<div id="cube" style="width:600px;height:600px;"></div>
+</body>
+</html>
