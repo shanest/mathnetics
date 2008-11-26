@@ -1,0 +1,24 @@
+*******************************************
+		Mathnetics
+*******************************************
+Math objects and 3D rendering for JavaScript and SVG
+
+Copyright (c) 2008 Shane Steinert-Threlkeld
+Released under the GPL and MIT Licenses (see included text files for more information)
+
+
+For further usage instructions and access to the SVN repository see: http://www.code.google.com/p/mathnetics/
+For a complete API reference documentation, see: 
+
+
+/*************************************************
+CREDITS:
+--------
+-Vector, Matrix, Line, and Plane are loosely based on Sylvester by James Coglan: http://www.sylvester.jcoglan.com
+-mathnetics.util.select, mathnetics.util.browser, mathnetics.util.hasClass adapted from jQuery: http://www.jquery.com
+	-in select, handling of ".className" parameter as per Dustin Diaz: http://dustindiaz.com/getelementsbyclass/
+-SVG functionality in mathnetics.gfx largely adapted, with heavy organizational changes, from jQuery SVG plug-in by
+Keith Wood: http://keith-wood.name/svg.html
+-------
+These pieces of code are all released under the GPL and MIT Licenses as is Mathnetics.
+*************************************************/
