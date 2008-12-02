@@ -12,6 +12,10 @@ clean:
 min:
 
 archive:
+	rm -rf mathnetics
+	mkdir mathnetics
+	cp -r src/* mathnetics
+	tar -czvf mathnetics-0.1.0.tar.gz *.txt README mathnetics --exclude=".*"
 
 documentation:
 	ant -f build.xml
