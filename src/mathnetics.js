@@ -4,7 +4,7 @@ For more information, see LICENSE file */
 
 /** @project Mathnetics
 @author Shane Steinert-Threlkeld
-@version 1.0.0
+@version 0.1.0
 @description Mathnetics API is a JavaScript library of mathematical objects that can be used for quite advanced applications.
 It includes 3D rendering onto an SVG canvas that works cross-browser on and off-line; see the documentation for mathnetics.svg.
 Mathnetics will also be a full-fledge GUI editor for interactive math pages, based on the libraries seen here.
@@ -68,7 +68,7 @@ var mathnetics = (function() {
 		/**The version number of mathnetics.
 		@variable {String} version
 		*/
-		version: "1.0.0",
+		version: "0.1.0",
 		/**Public reference to toButtons
 		@variable {String} pathToButtons 
 		*/
