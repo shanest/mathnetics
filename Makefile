@@ -4,10 +4,7 @@
 # For more information, see LICENSE file
 #
 
-all: 
-
-clean:
-	rm -r dist
+all: documentation archive clean
 
 min:
 
@@ -16,6 +13,9 @@ archive:
 	mkdir mathnetics
 	cp -r src/* mathnetics
 	tar -czvf mathnetics-0.1.0.tar.gz *.txt README mathnetics --exclude=".*"
+
+clean:
+	rm -rf mathnetics
 
 documentation:
 	ant -f build.xml
