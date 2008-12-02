@@ -26,7 +26,7 @@ mathnetics.extend(mathnetics.svg, {
 Scene3D: function(objs, svg, camera) {
 
 	/**SVG canvas for Scene
-	@variable {private mathnetics.gfx.SVGWrapper} svg */
+	@variable {private mathnetics.svg.SVGWrapper} svg */
 	this.svg = svg;
 	/**The "camera" is the point from which the objects are being viewed.  It is a dynamically defined Object with three properties: loc (mathnetics.point3D), theta (Number), and phi (Number).
 	Theta is the angle between the positive x axis and the orthogonal projection of the camera onto the XY-plane.
@@ -65,9 +65,9 @@ Scene3D: function(objs, svg, camera) {
 
 mathnetics.extend(mathnetics.svg.Scene3D.prototype, {
 
-	/**Draws the 3D scene, with the specified objects. REQUIRES jQuery SVG.
-	@param {Array} objs an array of object indices to be displayed. 
-	@param {Object} svg the jQuery SVG object in which to draw the scene 
+	/**Draws the 3D scene, with the specified objects.
+	@function {public void} draw
+	@param {int[]} objs - an array of object indices to be displayed. 
 	@param {Object} settings the settings to give to each line of the objects; can be an Array of settings, where each index of the array corresponds to the index of the objects passed to this function */
 	draw: function(objs, settings) {
 		//this.depthSort();
@@ -82,17 +82,19 @@ mathnetics.extend(mathnetics.svg.Scene3D.prototype, {
 		}
 	},
 
-	/**Empties the SVG canvas supplied.
-	@param {Object} svg the jQuery SVG root canvas 
-	@return {Scene3D} this Scene3D object, so calls can be stringed together */
+	/**Empties the SVG canvas of this scene.
+	@function {public mathnetics.svg.Scene3D} emptySVG
+	@return this Scene3D object, so calls can be stringed together 
+	@see mathnetics.svg.SVGWrapper.clear */
 	emptySVG: function() {
 		this.svg.clear();
 		return this;
 	},
 
 	/**Sets the focus (distance between Origin and camera).
-	@param {Number} dist the new focal distance
-	@return {Scene3D} this Scene3D object, with updated focus distance and matching camera position */
+	@function {public mathnetics.svg.Scene3D} setFocus
+	@param {Number} dist - the new focal distance
+	@return this Scene3D object, with updated focus distance and matching camera position */
 	setFocus: function(dist) {
 		this.focus = dist;
 		this.camera.loc = this.camera.loc.multiplyBy(this.focus/this.camera.loc.getLength());
@@ -101,9 +103,10 @@ mathnetics.extend(mathnetics.svg.Scene3D.prototype, {
 
 	/**Moves the camera to a new position.  Parameters are two angles, one in the XY-plane
 	from the positive x-axis and the other from the positive z-axis.
-	@param {Number} theta the degree (in radians) to rotate the camera from the positive x-axis
-	@param {Number} phi the degree (in radians) to rotate the camera from the positive z-axis
-	@return {Scene3D} this Scene3D object, with updated camera and view plane */
+	@function {public mathnetics.svg.Scene3D} rotateCamera
+	@param {Number} theta - the degree (in radians) to rotate the camera from the positive x-axis
+	@param {Number} phi - the degree (in radians) to rotate the camera from the positive z-axis
+	@return this Scene3D object, with updated camera and view plane */
 	rotateCamera: function(theta, phi) {
 		var itheta = theta;
 		var iphi = phi;
@@ -131,8 +134,9 @@ mathnetics.extend(mathnetics.svg.Scene3D.prototype, {
 */
 
 	/**Add an object to the 3D Scene.
-	@param {Object3D} obj the object to be added to the 3D Scene
-	@return {Scene3D} this Scene3D, with the object added (returns null if obj is not an Object3D) */
+	@function {public mathnetics.svg.Scene3D} addObject
+	@param {mathnetics.Object3D} obj - the object to be added to the 3D Scene
+	@return this Scene3D, with the object added (returns null if obj is not an Object3D) */
 	addObject: function(obj) {
 		if(!(obj instanceof mathnetics.Object3D)) {
 			return null;
@@ -142,7 +146,8 @@ mathnetics.extend(mathnetics.svg.Scene3D.prototype, {
 	},
 
 	/**Returns a string representation of the Scene (camera and objects).
-	@return {String} the location of the camera plus a list of all the objects
+	@function {public String} toString
+	@return the location of the camera plus a list of all the objects
 	@see mathnetics.Object3D.toString */
 	toString: function() {
 		return "camera: " + this.camera.loc + "\n----------\nobjects:\n-----\n" +this.objects.join("\n----------\n");

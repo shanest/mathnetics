@@ -10,9 +10,9 @@ You must have a CSS file (our default is SceneButton.css) and include it in your
 The default class used for buttons is "button", but you may define your own as you see fit and specify them as a parameter in your function calls.<br />
 For more info, see the static method documentation below.  An example call of a specific button:
 <blockquote><code>
-SceneButton.rotateZp(document.getElementById("button"), 'svg', 'scene', Math.PI/8, "[{stroke: 'black', 'stroke-width': .25}, {stroke: 'red', 'stroke-width': .125}, {stroke: 'green', 'stroke-width': .125}, {stroke: 'blue', 'stroke-width': .125}]", true);
+SceneButton.rotateZp(document.getElementById("button"), svg, scene, Math.PI/8, [{stroke: 'black', 'stroke-width': .25}, {stroke: 'red', 'stroke-width': .125}, {stroke: 'green', 'stroke-width': .125}, {stroke: 'blue', 'stroke-width': .125}], true);
 </code></blockquote>
-To change the images displayed for each button, edit SceneButton.js with the according images (mathnetics.pathToButtons variable is set in easyload.js).  The "button" class is defined in SceneButton.css, bt you can define your own classes however you desire; for usage of the default button set here, see <a href="http://somerandomdude.net/srd-projects/sanscons">Sancsons</a>
+To change the images displayed for each button, edit SceneButton.js with the according images (mathnetics.pathToButtons variable is set in mathnetics.js).  The "button" class is defined in SceneButton.css, bt you can define your own classes however you desire; for usage of the default button set here, see <a href="http://somerandomdude.net/srd-projects/sanscons">Sancsons</a>
 @class mathnetics.svg.SceneButton
 */
 
@@ -97,13 +97,13 @@ makeAll: function(parent, svg, scene, zStep, rStep, settings, continuous, cl) {
 	mathnetics.svg.SceneButton.rotateSW(parent, svg, scene, rStep, settings, continuous, cl);
 },
 
-/**Zooms in on the objects in the Scene3D.  Note: whatever the original "focus" is in your Scene3D, if you zoom in below 0, there will be momentary "noise" and then zooming in will be like zooming out.
+/**Zooms in on the objects in the Scene3D. 
 @function {public static mathnetics.svg.SceneButton} zoomIn
-@param {Object} parent - the DOM node that will be the parent of the button image
-@param {String} svg - the name of your SVGWrapper variable
-@param {String} scene - the name of your Scene3D object variable
+@param {DOMElement} parent - the DOM node that will be the parent of the button image
+@param {mathnetics.svg.SVGWrapper} svg - your SVG wrapper variable
+@param {mathnetics.svg.Scene3D} scene - your Scene3D object variable
 @param {Number} step - the increment to zoom in by each time
-@param {String} settings - the string version of a settings object; same as draw method settings, but surround with quotation marks
+@param {Object} settings - object literal of settings
 @param {optional boolean} continuous - true if want animation; false by default
 @param {optional String} cl - the class name to give your image tags; defaults to "button" as defined in SceneButton.css.  Must specify a boolean for continuous if want to use this parameter
 @return a new SceneButton (an image tag with proper attributes and onclick), by calling SceneButton.zoom
@@ -112,23 +112,33 @@ zoomIn: function(parent, svg, scene, step, settings, continuous, cl) {
 	return mathnetics.svg.SceneButton.zoom(parent, svg, scene, step, '-', settings, continuous, cl);
 },
 
+
 /**Zooms out on the objects in the Scene3D. 
-@param {Object} parent the DOM node that will be the parent of the button image
-@param {String} svg the name of your jQuery SVG root variable
-@param {String} scene the name of your Scene3D object variable
-@param {Number} step the increment to zoom out by each time
-@param {String} settings the string version of a settings object; same as draw method settings, but surround with quotation marks
-@param {Boolean} continuous (optional) true if want animation; false by default
-@param {String} class (optional) the class name to give your image tags; defaults to "button" as defined in SceneButton.css.  Must specify a boolean for continuous if want to use this parameter
-@return {SceneButton} a new SceneButton (an image tag with proper attributes and onclick), by calling SceneButton.zoom
-@see #zoom */
+@function {public static mathnetics.svg.SceneButton} zoomOut
+@param {DOMElement} parent - the DOM node that will be the parent of the button image
+@param {mathnetics.svg.SVGWrapper} svg - your SVG wrapper variable
+@param {mathnetics.svg.Scene3D} scene - your Scene3D object variable
+@param {Number} step - the increment to zoom out by each time
+@param {Object} settings - object literal of settings
+@param {optional boolean} continuous - true if want animation; false by default
+@param {optional String} cl - the class name to give your image tags; defaults to "button" as defined in SceneButton.css.  Must specify a boolean for continuous if want to use this parameter
+@return a new SceneButton (an image tag with proper attributes and onclick), by calling SceneButton.zoom
+@see zoom */
 zoomOut: function(parent, svg, scene, step, settings, continuous, cl) {
 	return mathnetics.svg.SceneButton.zoom(parent, svg, scene, step, '+', settings, continuous, cl);
 },
 
 /**For specification of most parameters, see {@link #zoomIn} or {@link #zoomOut}.  
-@param {String} sign '+' for zooming out, '-' for zooming in
-@return {SceneButton} the specified button */
+@function {public static mathnetics.svg.Scene3D} zoom
+@param {DOMElement} parent
+@param {mathnetics.svg.SVGWrapper} svg
+@param {mathnetics.svg.Scene3D} scene
+@param {Number} step
+@param {String} sign - '+' for zooming out, '-' for zooming in
+@param {Object} settings
+@param {optional boolean} continuous
+@param {optional String} cl
+@return the specified button */
 zoom:  function(parent, svg, scene, step, sign, settings, continuous, cl) {
 	var img;
 	if(sign == '-') {
@@ -149,36 +159,46 @@ zoom:  function(parent, svg, scene, step, sign, settings, continuous, cl) {
 },
 
 /**Creates a button responsible for positive rotation about the Z-axis.
-@param {Object} parent the DOM node that will be the parent of the button image
-@param {String} svg the name of your jQuery SVG root variable
-@param {String} scene the name of your Scene3D object variable
-@param {Number} step the increment to rotate each time
-@param {String} settings the string version of a settings object; same as draw method settings, but surround with quotation marks
-@param {Boolean} continuous (optional) true if want animation; false by default
-@param {String} class (optional) the class name to give your image tags; defaults to "button" as defined in SceneButton.css.  Must specify a boolean for continuous if want to use this parameter
-@return {SceneButton} a new SceneButton (an image tag with proper attributes and onclick), by calling SceneButton.rotateZ
-@see #rotateZ */
+@function {public static mathnetics.svg.SceneButton} rotateZp 
+@param {DOMElement} parent - the DOM node that will be the parent of the button image
+@param {mathnetics.svg.SVGWrapper} svg - your SVG wrapper variable
+@param {mathnetics.svg.Scene3D} scene - your Scene3D object variable
+@param {Number} step - the increment to rotate by each time
+@param {Object} settings - object literal of settings
+@param {optional boolean} continuous - true if want animation; false by default
+@param {optional String} cl - the class name to give your image tags; defaults to "button" as defined in SceneButton.css.  Must specify a boolean for continuous if want to use this parameter
+@return a new SceneButton (an image tag with proper attributes and onclick), by calling SceneButton.rotateZ
+@see rotateZ */
 rotateZp: function(parent, svg, scene, step, settings, continuous, cl) {
 	return mathnetics.svg.SceneButton.rotateZ(parent, svg, scene, step, '-', settings, continuous, cl);
 },
 
 /**Creates a button responsible for negative rotation about the Z-axis.
-@param {Object} parent the DOM node that will be the parent of the button image
-@param {String} svg the name of your jQuery SVG root variable
-@param {String} scene the name of your Scene3D object variable
-@param {Number} step the increment to rotate each time
-@param {String} settings the string version of a settings object; same as draw method settings, but surround with quotation marks
-@param {Boolean} continuous (optional) true if want animation; false by default
-@param {String} class (optional) the class name to give your image tags; defaults to "button" as defined in SceneButton.css.  Must specify a boolean for continuous if want to use this parameter
-@return {SceneButton} a new SceneButton (an image tag with proper attributes and onclick), by calling SceneButton.rotateZ
-@see #rotateZ */
+@function {public static mathnetics.svg.SceneButton} rotateZn
+@param {DOMElement} parent - the DOM node that will be the parent of the button image
+@param {mathnetics.svg.SVGWrapper} svg - your SVG wrapper variable
+@param {mathnetics.svg.Scene3D} scene - your Scene3D object variable
+@param {Number} step - the increment to rotate by each time
+@param {Object} settings - object literal of settings
+@param {optional boolean} continuous - true if want animation; false by default
+@param {optional String} cl - the class name to give your image tags; defaults to "button" as defined in SceneButton.css.  Must specify a boolean for continuous if want to use this parameter
+@return a new SceneButton (an image tag with proper attributes and onclick), by calling SceneButton.rotateZ
+@see rotateZ */
 rotateZn: function(parent, svg, scene, step, settings, continuous, cl) {
 	return mathnetics.svg.SceneButton.rotateZ(parent, svg, scene, step, '+', settings, continuous, cl);
 },
 
-/**For specification of most parameters, see {@link #rotateZp} or {@link #rotateZn}.  
-@param {String} sign '+' for negative rotation, '-' for positive rotation
-@return {SceneButton} the specified button */
+/**For specification of most parameters, see {@link rotateZp} or {@link rotateZn}.  
+@function {public static SceneButton} rotateZ
+@param {DOMElement} parent
+@param {mathnetics.svg.SVGWrapper} svg
+@param {mathnetics.svg.Scene3D} scene
+@param {Number} step
+@param {String} sign - '+' for negative rotation, '-' for positive rotation
+@param {Object} settings
+@param {optional boolean} continuous
+@param {optional String} cl
+@return the specified button */
 rotateZ: function(parent, svg, scene, step, sign, settings, continuous, cl) {
 	var img;
 	if(sign == '-') {
@@ -199,35 +219,45 @@ rotateZ: function(parent, svg, scene, step, sign, settings, continuous, cl) {
 },
 
 /**Creates a button responsible for positive rotation about the XY-plane.
-@param {Object} parent the DOM node that will be the parent of the button image
-@param {String} svg the name of your jQuery SVG root variable
-@param {String} scene the name of your Scene3D object variable
-@param {Number} step the increment to rotate each time
-@param {String} settings the string version of a settings object; same as draw method settings, but surround with quotation marks
-@param {Boolean} continuous (optional) true if want animation; false by default
-@param {String} class (optional) the class name to give your image tags; defaults to "button" as defined in SceneButton.css.  Must specify a boolean for continuous if want to use this parameter
-@return {SceneButton} a new SceneButton (an image tag with proper attributes and onclick), by calling SceneButton.rotateXY
-@see #rotateXY */
+@function {public static mathnetics.svg.SceneButton} rotateXYp
+@param {DOMElement} parent - the DOM node that will be the parent of the button image
+@param {mathnetics.svg.SVGWrapper} svg - your SVG wrapper variable
+@param {mathnetics.svg.Scene3D} scene - your Scene3D object variable
+@param {Number} step - the increment to rotate by each time
+@param {Object} settings - object literal of settings
+@param {optional boolean} continuous - true if want animation; false by default
+@param {optional String} cl - the class name to give your image tags; defaults to "button" as defined in SceneButton.css.  Must specify a boolean for continuous if want to use this parameter
+@return a new SceneButton (an image tag with proper attributes and onclick), by calling SceneButton.rotateZ
+@see rotateXY */
 rotateXYp: function(parent, svg, scene, step, settings, continuous, cl) {
 	return mathnetics.svg.SceneButton.rotateXY(parent, svg, scene, step, '+', settings, continuous, cl);
 },
 
 /**Creates a button responsible for negative rotation about the XY-plane.
-@param {Object} parent the DOM node that will be the parent of the button image
-@param {String} svg the name of your jQuery SVG root variable
-@param {String} scene the name of your Scene3D object variable
-@param {Number} step the increment to rotate each time
-@param {String} settings the string version of a settings object; same as draw method settings, but surround with quotation marks
-@param {Boolean} continuous (optional) true if want animation; false by default
-@param {String} class (optional) the class name to give your image tags; defaults to "button" as defined in SceneButton.css.  Must specify a boolean for continuous if want to use this parameter
-@return {SceneButton} a new SceneButton (an image tag with proper attributes and onclick), by calling SceneButton.rotateXY
-@see #rotateXY */
+@function {public static mathnetics.svg.SceneButton} rotateXYn
+@param {DOMElement} parent - the DOM node that will be the parent of the button image
+@param {mathnetics.svg.SVGWrapper} svg - your SVG wrapper variable
+@param {mathnetics.svg.Scene3D} scene - your Scene3D object variable
+@param {Number} step - the increment to rotate by each time
+@param {Object} settings - object literal of settings
+@param {optional boolean} continuous - true if want animation; false by default
+@param {optional String} cl - the class name to give your image tags; defaults to "button" as defined in SceneButton.css.  Must specify a boolean for continuous if want to use this parameter
+@return a new SceneButton (an image tag with proper attributes and onclick), by calling SceneButton.rotateZ
+@see rotateXY */
 rotateXYn: function(parent, svg, scene, step, settings, continuous, cl) {
 	return mathnetics.svg.SceneButton.rotateXY(parent, svg, scene, step, '-', settings, continuous, cl);
 },
 
-/**For specification of most parameters, see {@link #rotateXYp} or {@link #rotateXYn}.  
-@param {String} sign '-' for negative rotation, '+' for positive rotation
+/**For specification of most parameters, see {@link rotateXYp} or {@link rotateXYn}.  
+@function {public static mathnetics.svg.SceneButton} rotateXY
+@param {DOMElement} parent
+@param {mathnetics.svg.SVGWrapper} svg
+@param {mathnetics.svg.Scene3D} scene
+@param {Number} step
+@param {String} sign - '-' for negative rotation, '+' for positive rotation
+@param {Object} settings
+@param {optional boolean} continuous
+@param {optional String} cl
 @return {SceneButton} the specified button */
 rotateXY: function(parent, svg, scene, step, sign, settings, continuous, cl) {
 	var img;
@@ -249,65 +279,77 @@ rotateXY: function(parent, svg, scene, step, sign, settings, continuous, cl) {
 },
 
 /**Creates a button responsible for "North-east" (positive around Z and XY) rotation. 
-@param {Object} parent the DOM node that will be the parent of the button image
-@param {String} svg the name of your jQuery SVG root variable
-@param {String} scene the name of your Scene3D object variable
-@param {Number} step the increment to rotate each time
-@param {String} settings the string version of a settings object; same as draw method settings, but surround with quotation marks
-@param {Boolean} continuous (optional) true if want animation; false by default
-@param {String} class (optional) the class name to give your image tags; defaults to "button" as defined in SceneButton.css.  Must specify a boolean for continuous if want to use this parameter
-@return {SceneButton} a new SceneButton (an image tag with proper attributes and onclick), by calling SceneButton.rotate
-@see #rotate */
+@function {public static mathnetics.svg.SceneButton} rotateNE
+@param {DOMElement} parent - the DOM node that will be the parent of the button image
+@param {mathnetics.svg.SVGWrapper} svg - your SVG wrapper variable
+@param {mathnetics.svg.Scene3D} scene - your Scene3D object variable
+@param {Number} step - the increment to rotate by each time
+@param {Object} settings - object literal of settings
+@param {optional boolean} continuous - true if want animation; false by default
+@param {optional String} cl - the class name to give your image tags; defaults to "button" as defined in SceneButton.css.  Must specify a boolean for continuous if want to use this parameter
+@return a new SceneButton (an image tag with proper attributes and onclick), by calling SceneButton.rotateZ
+@see rotate */
 rotateNE: function(parent, svg, scene, step, settings, continuous, cl) {
 	return mathnetics.svg.SceneButton.rotate(parent, svg, scene, step, '+', '-', settings, continuous, cl);
 },
 
 /**Creates a button responsible for "North-west" (positive around Z, negative around XY) rotation. 
-@param {Object} parent the DOM node that will be the parent of the button image
-@param {String} svg the name of your jQuery SVG root variable
-@param {String} scene the name of your Scene3D object variable
-@param {Number} step the increment to rotate each time
-@param {String} settings the string version of a settings object; same as draw method settings, but surround with quotation marks
-@param {Boolean} continuous (optional) true if want animation; false by default
-@param {String} class (optional) the class name to give your image tags; defaults to "button" as defined in SceneButton.css.  Must specify a boolean for continuous if want to use this parameter
-@return {SceneButton} a new SceneButton (an image tag with proper attributes and onclick), by calling SceneButton.rotate
-@see #rotate */
+@function {public static mathnetics.svg.SceneButton} rotateNW
+@param {DOMElement} parent - the DOM node that will be the parent of the button image
+@param {mathnetics.svg.SVGWrapper} svg - your SVG wrapper variable
+@param {mathnetics.svg.Scene3D} scene - your Scene3D object variable
+@param {Number} step - the increment to rotate by each time
+@param {Object} settings - object literal of settings
+@param {optional boolean} continuous - true if want animation; false by default
+@param {optional String} cl - the class name to give your image tags; defaults to "button" as defined in SceneButton.css.  Must specify a boolean for continuous if want to use this parameter
+@return a new SceneButton (an image tag with proper attributes and onclick), by calling SceneButton.rotateZ
+@see rotate */
 rotateNW: function(parent, svg, scene, step, settings, continuous, cl) {
 	return mathnetics.svg.SceneButton.rotate(parent, svg, scene, step, '-', '-', settings, continuous, cl);
 },
 
 /**Creates a button responsible for "South-east" (negative around Z, positive around XY) rotation. 
-@param {Object} parent the DOM node that will be the parent of the button image
-@param {String} svg the name of your jQuery SVG root variable
-@param {String} scene the name of your Scene3D object variable
-@param {Number} step the increment to rotate each time
-@param {String} settings the string version of a settings object; same as draw method settings, but surround with quotation marks
-@param {Boolean} continuous (optional) true if want animation; false by default
-@param {String} class (optional) the class name to give your image tags; defaults to "button" as defined in SceneButton.css.  Must specify a boolean for continuous if want to use this parameter
-@return {SceneButton} a new SceneButton (an image tag with proper attributes and onclick), by calling SceneButton.rotate
-@see #rotate */
+@function {public static mathnetics.svg.SceneButton} rotateSE
+@param {DOMElement} parent - the DOM node that will be the parent of the button image
+@param {mathnetics.svg.SVGWrapper} svg - your SVG wrapper variable
+@param {mathnetics.svg.Scene3D} scene - your Scene3D object variable
+@param {Number} step - the increment to rotate by each time
+@param {Object} settings - object literal of settings
+@param {optional boolean} continuous - true if want animation; false by default
+@param {optional String} cl - the class name to give your image tags; defaults to "button" as defined in SceneButton.css.  Must specify a boolean for continuous if want to use this parameter
+@return a new SceneButton (an image tag with proper attributes and onclick), by calling SceneButton.rotateZ
+@see rotate */
 rotateSE: function(parent, svg, scene, step, settings, continuous, cl) {
 	return mathnetics.svg.SceneButton.rotate(parent, svg, scene, step, '+', '+', settings, continuous, cl);
 },
 
 /**Creates a button responsible for "South-west" (negative around Z and XY) rotation. 
-@param {Object} parent the DOM node that will be the parent of the button image
-@param {String} svg the name of your jQuery SVG root variable
-@param {String} scene the name of your Scene3D object variable
-@param {Number} step the increment to rotate each time
-@param {String} settings the string version of a settings object; same as draw method settings, but surround with quotation marks
-@param {Boolean} continuous (optional) true if want animation; false by default
-@param {String} class (optional) the class name to give your image tags; defaults to "button" as defined in SceneButton.css.  Must specify a boolean for continuous if want to use this parameter
-@return {SceneButton} a new SceneButton (an image tag with proper attributes and onclick), by calling SceneButton.rotate
-@see #rotate */
+@function {public static mathnetics.svg.SceneButton} rotateSW
+@param {DOMElement} parent - the DOM node that will be the parent of the button image
+@param {mathnetics.svg.SVGWrapper} svg - your SVG wrapper variable
+@param {mathnetics.svg.Scene3D} scene - your Scene3D object variable
+@param {Number} step - the increment to rotate by each time
+@param {Object} settings - object literal of settings
+@param {optional boolean} continuous - true if want animation; false by default
+@param {optional String} cl - the class name to give your image tags; defaults to "button" as defined in SceneButton.css.  Must specify a boolean for continuous if want to use this parameter
+@return a new SceneButton (an image tag with proper attributes and onclick), by calling SceneButton.rotateZ
+@see rotate */
 rotateSW: function(parent, svg, scene, step, settings, continuous, cl) {
 	return mathnetics.svg.SceneButton.rotate(parent, svg, scene, step, '-', '+', settings, continuous, cl);
 },
 
-/**For specification of most parameters, see {@link #rotateNW}, {@link #rotateNE}, {@link #rotateSW} or {@link #rotateSE}.  
+/**For specification of most parameters, see {@link rotateNW}, {@link rotateNE}, {@link rotateSW} or {@link rotateSE}.  
+@function {public static mathnetics.svg.SceneButton} rotate
+@param {DOMElement} parent
+@param {mathnetics.svg.SVGWrapper} svg
+@param {mathnetics.svg.Scene3D} scene
+@param {Number} step
 @param {String} xySign '+' or '-' for the direction of the rotation about XY plane ({@link #rotateXY})
 @param {String} zSign '+' or '-' for the direction of the rotation about Z axis ({@link #rotateZ})
-@return {SceneButton} the specified button */
+@param {Object} settings
+@param {optional boolean} continuous
+@param {optional String} cl
+@return the specified button */
 rotate: function(parent, svg, scene, step, xySign, zSign, settings, continuous, cl) {
 	var img;
 	switch(xySign) {

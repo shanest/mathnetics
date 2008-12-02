@@ -116,11 +116,15 @@ mathnetics.extend(mathnetics.svg, {
 		this._extensions[this._extensions.length] = [name, extClass];
 	},
 
-/**
+/**This class provides a point-of-access for manipulating an SVG canvas as created by {@link mathnetics.svg.attach}.
+There are helper functions (with more to be added) to carry out the basic duties needed in mathnetics.<br />
+This class is instantiated by {@link mathnetics.svg.attach} and should not be instantiated otherwise.
 @class mathnetics.svg.SVGWrapper
 */
 
-	/**
+	/**Constructor function. Should not be used on its own, but is called by {@link mathnetics.svg.attach}.
+	@param {SVGDocumentElement} svg - the root svg element of the document/canvas
+	@param {DOMElement} container - the containing div element 
 	@constructor SVGWrapper
 	*/
 	SVGWrapper: function(svg, container) {
@@ -136,18 +140,43 @@ mathnetics.extend(mathnetics.svg, {
 
 mathnetics.extend(mathnetics.svg.SVGWrapper.prototype, {
 
+	/**Makes a new line and attaches it to a parent node.
+	@function {public SVGElement} line
+	@param {SVGElement} parent - the SVG element to which to attach the line; pass <code>null</code> to attach to root document element
+	@param {Number} x1 - start x value
+	@param {Number} y1 - start y value
+	@param {Number} x2 - end x value
+	@param {Number} y2 - end y value
+	@param {optional Object} settings - an object literal of attribute-value pairs to be settings for the line
+	@return the created line element */
 	line: function(parent, x1, y1, x2, y2, settings) {
 		return this._makeNode(parent, "line", mathnetics.extend({'x1': x1, 'y1': y1, 'x2': x2, 'y2': y2}, settings || {}));
 	},
 
+	/**Makes a new path and attaches it to a parent node.
+	@function {public SVGElement} path
+	@param {SVGElement} parent - the SVG element to which to attach the line; pass <code>null</code> to attach to root document element
+	@param {String} p - the path string; see <a href="http://www.w3.org/TR/SVG/paths.html" target="blank">http://www.w3.org/TR/SVG/paths.html</a> for more info
+	@param {optional Object} settings - an object literal of attribute-value pairs to be settings for the path
+	@return the created path element */
 	path: function(parent, p, settings) {
 		return this._makeNode(parent, "path", mathnetics.extend({d: p}, settings || {}));
 	},
 
+	/**Makes a new group ("g" in SVG) and attaches it to a parent node. Normally used as a parent node to transform all children.
+	@function {public SVGElement} group
+	@param {SVGElement} parent - the SVG element to which to attach the group; pass <code>null</code> to attach to root document element
+	@param {optional Object} settings - an object literal of attribute-value pairs to be settings for the group
+	@return the created group element */
 	group: function(parent, settings) {
 		return this._makeNode(parent, 'g', settings || {});
 	},
 
+	/**Configures the settings for the root SVG element.
+	@function {public mathnetics.svg.SVGWrapper} configure
+	@param {Object} settings - an object literal of attribute-value pairs to be settings for the group
+	@param {optional boolean} clear - if true, delete all current attributes values; defaults to false
+	@return the same SVGWrapper object */
 	configure: function(settings, clear) {
 		if(clear) {
 			var attrs = this._svg.attributes;
@@ -164,6 +193,11 @@ mathnetics.extend(mathnetics.svg.SVGWrapper.prototype, {
 		return this;
 	},
 
+	/**Empties the SVG canvas, but does not remove canvas from container div.
+	@function {public mathnetics.svg.SVGWrapper} clear
+	@param {optional boolean} attrsToo - if true, removes attributes from root SVG element
+	@return the same SVGWrapper object
+	@see configure */
 	clear: function(attrsToo) {
 		if(attrsToo) {
 			this.configure({}, true);
@@ -174,6 +208,13 @@ mathnetics.extend(mathnetics.svg.SVGWrapper.prototype, {
 		return this;
 	},
 
+	/**Makes and returns a new SVG element as specified. Used internally by most element creation methods.<br />
+	Can be used to make SVG elements for which this class does not provide helper constructors as well.
+	@function {private SVGElement} _makeNode
+	@param {SVGElement} parent - the SVG element to which to attach the line; pass <code>null</code> to attach to root document element
+	@param {String} tag - the name of the tag to create
+	@param {optional Object} settings - an object literal of attribute-value pairs to be settings for the element 
+	@return the created SVG element */
 	_makeNode: function(parent, tag, settings) {
 		parent = parent || this._svg;
 		var node = (new mathnetics.util.Element(tag, settings)).toNS(mathnetics.svg.svgNS, this._svg.ownerDocument);

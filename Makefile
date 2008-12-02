@@ -4,7 +4,7 @@
 # For more information, see LICENSE file
 #
 
-all: documentation
+all: 
 
 clean:
 	rm -r dist
