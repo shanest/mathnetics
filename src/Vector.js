@@ -358,7 +358,7 @@ Vector.prototype = {
 
 	/**Sets and or returns the dimension of the vector: if no parameter supplied, returns dimension; if number given, sets dimension.
 	@function {public int} dimension
-	@param {optional int} n - the dimension to set the array.  If n > current dimension, 0s added as all new components; if n < current dimension, all components greater than that dimension are deleted.
+	@param {optional int} n - the dimension to set the array.  If n &gt; current dimension, 0s added as all new components; if n &lt; current dimension, all components greater than that dimension are deleted.
 	@return the dimension of the vector. */
 	dimension: function(n) {
 		if(n) {
@@ -376,7 +376,7 @@ Vector.prototype = {
 
 	/**Makes a copy of the given vector in 3 dimensions.
 	@function {public Vector} make3D
-	@return a new vector that is 3-D, with components decided according to the dimension() method (i.e. 0 if n<3, removed if n > 3)
+	@return a new vector that is 3-D, with components decided according to the dimension() method (i.e. 0 if n&lt;3, removed if n &gt; 3)
 	@see dimension */
 	make3D: function() {
 		var newVec = new Vector(this);

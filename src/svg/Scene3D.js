@@ -119,7 +119,7 @@ mathnetics.extend(mathnetics.svg.Scene3D.prototype, {
 		return this;
 	},
 
-/** FINISH THIS METHOD ONCE ALL THE REQUIRED METHODS / OBJECT3D ARE DEFINED
+/* FINISH THIS METHOD ONCE ALL THE REQUIRED METHODS / OBJECT3D ARE DEFINED
 	depthSort: function() {
 		var dist, mids;
 		var faceDists = new Array();

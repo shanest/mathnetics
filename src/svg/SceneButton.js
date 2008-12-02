@@ -6,7 +6,7 @@ For more information, see LICENSE file */
 
 /**This class defines various buttons (images with javascript actions) to change/rotate the Scene3D and re-draw it.<br />
 The icons used are Sanscons from Some Random Dude.  See: http://somerandomdude.net/srd-projects/sanscons<br />
-You must have a CSS file (our default is SceneButton.css) and include it in your HTML document with a <link rel='stylesheet' type='text/css' href='SceneButton.css'></link> tag.  
+You must have a CSS file (our default is SceneButton.css) and include it in your HTML document with a &lt;link rel='stylesheet' type='text/css' href='SceneButton.css' /&gt; tag.  
 The default class used for buttons is "button", but you may define your own as you see fit and specify them as a parameter in your function calls.<br />
 For more info, see the static method documentation below.  An example call of a specific button:
 <blockquote><code>
@@ -71,7 +71,7 @@ toggle: function(func) {
 },
 
 /**Makes all the buttons and appends them to the parent DOM node. For most parameters, see any of the individual button methods.
-@function {public static void} makeall
+@function {public static void} makeAll
 @param {Number} zStep - the increment to zoom by for the zoomIn/zoomOut buttons
 @param {Number} rStep - the increment (radians) to use for the rotation methods 
 @see zoomIn 
