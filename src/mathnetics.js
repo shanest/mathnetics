@@ -15,7 +15,7 @@ Dual licensed under GPL and MIT licenses (see included text files)
 @namespace mathnetics
 The root namespace in which all Mathnetics-specific objects fall.  Note that universal mathematical objects, such as 
 Vector, Plane, Matrix, Line, etc. are global objects.
-The mathnetics namespace also defines a few constants, such as zero (used for roundoff error) and phi.
+The mathnetics namespace also defines a few constants, such as {@link mathnetics.zero zero} (used for roundoff error) and {@link mathnetics.phi phi}.
 */
 var mathnetics = (function() {
 
@@ -23,7 +23,7 @@ var mathnetics = (function() {
 	@variable {private String} pathToHere
 	*/
 	var pathToHere = "http://cis.jhu.edu/~shanest/js/mathnetics/src/";
-	/**The names of the files to automatically load whenever mathnetics.js is loaded (['Matrix','gfx/SVG'], i.e.) 
+	/**The names of the files to automatically load whenever mathnetics.js is loaded (['Matrix','svg/svg'], i.e.) 
 	@variable {private Array} autoLoad
 	*/
 	var autoLoad = [];
