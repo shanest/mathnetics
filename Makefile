@@ -1,7 +1,7 @@
 #
 # Mathnetics Copyright (c) 2008 Shane Steinert-Threlkeld
 # Dual-licensed under the MIT and GNU GPL Licenses.
-# For more information, see LICENSE file
+# For more information, see included text files
 #
 
 all: documentation archive clean
