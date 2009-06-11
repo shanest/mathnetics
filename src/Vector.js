@@ -463,6 +463,13 @@ mathnetics.extend(mathnetics.Vector.prototype, {
 		return this;
 	},
 
+	/**Clones the current Vector into a new one.
+	@function {public mathnetics.Vector} dup
+	@return a new clone of current Vector */
+	dup: function() {
+		return mathnetics.Vector.create(this);
+	},
+
 	/**Returns a string representation of the vector.
 	@function {public String} toString
 	@return the string representation of the vector.*/
