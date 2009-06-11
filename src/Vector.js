@@ -3,35 +3,21 @@ Dual-licensed under the MIT and GNU GPL Licenses.
 For more information, see LICENSE file */
 
 /**The Vector class includes instance methods and static objects/methods.  It has no dependencies but is automatically included with Matrix.js.
-@class Vector
+@class mathnetics.Vector
 */
 
-/**Constructor function.  Takes an Array or a Vector and creates a Vector object.
-@paramset fromArray
-@param {Number[]} elements - Array to become the components of the Vector
-@paramset clone
-@param {Vector} vec - the vector to clone
-@constructor Vector */
-function Vector(elements) {
+mathnetics.Vector = function() {
 	/**the components of the Vector
 	@variable {Number[]} components
 	*/
 	this.components = new Array();
-	if(elements instanceof Array) {
-		this.components = elements;
-	} 
-	//allows easy cloning of a vector
-	if(elements instanceof Vector) {
-		//slice so that changes to new vector do not affect old one
-		this.components = elements.components.slice();
-	}
 	/**the dimension of the Vector (length of components array) 
 	@variable {int} n
 	*/
 	this.n = this.components.length;
-}
+};
 
-Vector.prototype = {
+mathnetics.extend(mathnetics.Vector.prototype, {
 
 	/**Gets the component of the vector at index.
 	@function {public Number} get
@@ -51,7 +37,7 @@ Vector.prototype = {
 			this.toEach(function(x, i, k) {
 				elements.push(func(x, i, k));
 			});
-			return new Vector(elements);
+			return mathnetics.Vector.create(elements);
 		} else {
 			return null;
 		}
@@ -92,7 +78,7 @@ Vector.prototype = {
 	normalize: function() {
 		var length = this.getLength();
 		if(length == 0) {
-			return new Vector(this);
+			return mathnetics.Vector(this);
 		}
 		return this.map(function(x) {
 				return x / length;
@@ -204,7 +190,7 @@ Vector.prototype = {
 		if(this.n == 3 && vec.n == 3) {
 			var a = this.components;
 			var b = vec.components;
-			return new Vector([
+			return mathnetics.Vector.create([
 				a[1]*b[2] - a[2]*b[1],
 				a[2]*b[0] - a[0]*b[2],
 				a[0]*b[1] - a[1]*b[0]
@@ -233,12 +219,12 @@ Vector.prototype = {
 	@return a new Vector or mathnetics.point3D (depends on which calls this function) that is reflected */
 	reflectionIn: function(obj) {
 		if(obj.base) { //obj is a Line or Plane
-			var point = new mathnetics.point3D(this.get(1),this.get(2),(this.get(3) || 0));
+			var point = mathnetics.point3D.create(this.get(1),this.get(2),(this.get(3) || 0));
 			var closest = obj.pointClosestTo(point);
 			var vec = closest.add(closest.subtract(point));
 			if(this instanceof mathnetics.point3D) {
 				return new mathnetics.point3D(vec.get(1), vec.get(2), vec.get(3));
-			} else if (this instanceof Vector) {
+			} else if (this instanceof mathnetics.Vector) {
 				return new Vector(vec);
 			}
 		} else { //handles mathnetics.point2D/3D or Vector
@@ -265,7 +251,7 @@ Vector.prototype = {
 			els[i-1] = new Array();
 			els[i-1][0] = this.get(i);
 		}
-		return new Matrix(els);
+		return mathnetics.Matrix.create(els);
 	},
 
 	/**Converts a Vector into a 1-row matrix.
@@ -274,7 +260,7 @@ Vector.prototype = {
 	toRowMatrix: function() {
 		var els = new Array();
 		els[0] = this.components;
-		return new Matrix(els);
+		return mathnetics.Matrix.create(els);
 	},
 
 	/**Returns the length of the vector by modulus definition: length = sqrt(this.dot(this))
@@ -379,7 +365,7 @@ Vector.prototype = {
 	@return a new vector that is 3-D, with components decided according to the dimension() method (i.e. 0 if n&lt;3, removed if n &gt; 3)
 	@see dimension */
 	make3D: function() {
-		var newVec = new Vector(this);
+		var newVec = mathnetics.Vector.create(this);
 		newVec.dimension(3);
 		return newVec;
 	},
@@ -449,14 +435,32 @@ Vector.prototype = {
 	@return either a mathnetics.point2D or mathnetics.point3D object, depending on size of Vector, with same  coordinates as the Vector's components */
 	toPoint: function() {
 		if(this.n == 2) {
-			return new mathnetics.point2D(this.get(1),this.get(2));
-		} else if(this.n == 3) {
-			return new mathnetics.point3D(this.get(1),this.get(2),this.get(3));
-		} else if(this.n == 4) {
-			return new mathnetics.point3D(this.get(1),this.get(2),this.get(3));
+			return mathnetics.point2D.create(this.get(1),this.get(2));
+		} else if(this.n == 3 || this.n == 4) {
+			return mathnetics.point3D.create(this.get(1),this.get(2),this.get(3));
 		} else {
 			return null;
 		}
+	},
+
+	/**Resets the elements of the Vector; used by constructor.
+	@function {public mathnetics.Vector} setElements
+	@paramset fromArray
+	@param {Number[]} elements - Array to become the components of the Vector
+	@paramset clone
+	@param {Vector} vec - the vector to clone
+	@return this Vector, updated */
+	setElements: function(elements) {
+		if(elements instanceof Array) {
+			this.components = elements;
+		} 
+		//allows easy cloning of a vector
+		if(elements instanceof mathnetics.Vector) {
+			//slice so that changes to new vector do not affect old one
+			this.components = elements.components.slice();
+		}
+		this.n = this.components.length;
+		return this;
 	},
 
 	/**Returns a string representation of the vector.
@@ -466,14 +470,37 @@ Vector.prototype = {
 		return "[" + this.components.join(" ") + "]";
 	}
 
-} //end Vector prototype
+}); //end Vector prototype
+
+/**Constructor function.  Takes an Array or a Vector and creates a Vector object.
+@function {public static mathnetics.Vector} mathnetics.Vector.create
+@constructor mathnetics.Vector 
+@see mathnetics.Vector.setElements */
+mathnetics.Vector.create = function(elements) {
+	var V = new mathnetics.Vector();
+	return V.setElements(elements);
+};
+
+mathnetics.extend(mathnetics.Vector, {
+
+
+//The three standard unit vectors in 3 dimensions
+/**The unit vector [1,0,0]
+@variable {public static mathnetics.Vector} mathnetics.Vector.i */
+i: mathnetics.Vector.create([1,0,0]),
+/**The unit vector [0,1,0]
+@variable {public static mathnetics.Vector} mathnetics.Vector.j */
+j: mathnetics.Vector.create([0,1,0]),
+/**The unit vector [0,0,1]
+@variable {public static mathnetics.Vector} mathnetics.Vector.k */
+k: mathnetics.Vector.create([0,0,1]),
 
 /**Creates and returns a new vector with n random elements less than or equal to max.
-@function {public static Vector} random
+@function {public static Vector} mathnetics.Vector.random
 @param {int} n - the number of components the vector should be
 @param {optional Number} max - the maximum value the elements can be; if not specified, values will be in rand [0,1) 
 @return a new vector with random components */
-Vector.random = function(n, max) {
+random: function(n, max) {
 	var elements = new Array();
 	for(i = 0; i < n; i++) {
 		if(max) {
@@ -482,28 +509,19 @@ Vector.random = function(n, max) {
 			elements[i] = Math.random();
 		}
 	}
-	return new Vector(elements);
-}
+	return mathnetics.Vector.create(elements);
+},
 
 /**Creates and returns  a new vector of dimension n with all 0 components.
-@function {public static Vector} zero
+@function {public static Vector} mathnetics.Vector.zero
 @param {int} n - the dimension of the new zero vector
 @return a new zero vector of dimension n */
-Vector.zero = function(n) {
+zero: function(n) {
 	var elements = new Array();
 	for(i = 0; i < n; i++) {
 		elements[i] = 0;
 	}
-	return new Vector(elements);
+	return mathnetics.Vector.create(elements);
 }
 
-//The three standard unit vectors in 3 dimensions
-/**The unit vector [1,0,0]
-@variable {public static Vector} i */
-Vector.i = new Vector([1,0,0]);
-/**The unit vector [0,1,0]
-@variable {public static Vector} j */
-Vector.j = new Vector([0,1,0]);
-/**The unit vector [0,0,1]
-@variable {public static Vector} k */
-Vector.k = new Vector([0,0,1]);
+});
