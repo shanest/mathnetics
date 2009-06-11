@@ -3,44 +3,18 @@ Dual-licensed under the MIT and GNU GPL Licenses.
 For more information, see LICENSE file */
 
 /**Note that a Matrix object is an Array, where each component is a Vector, representing a row of the matrix.
-@class Matrix */
+@class mathnetics.Matrix */
 
 dependencies = ['Vector'];
 mathnetics.require(dependencies);
 
-/**Constructor function.
-@paramset fromArray
-@param {Number[]} arr - an array representation of the matrix; can be a 1D, 2D, or array of Vectors
-@paramset fromVector
-@param {Vector} vec - the vector which will become the single row of this matrix
-@paramset clone
-@param {Matrix} m - the matrix of which to create a clone
-@constructor Matrix
-*/
-function Matrix(elements) {
+mathnetics.Matrix = function() {
 	/**an Array whose elements are Vectors, the vectors being rows of the matrix 
 	@variable {Vector[]} components */
 	this.components = new Array();
-	if(elements instanceof Vector) {
-		this.components[0] = new Vector(elements);
-	}
-	if(elements instanceof Array) {
-		if(typeof elements[0][0] != 'undefined') {
-			for(i = 0; i < elements.length; i++) {
-				this.components[i] = new Vector(elements[i]);
-			}
-		} else {
-			this.components[0] = new Vector(elements);
-		}
-	}
-	if(elements instanceof Matrix) {
-		for(i = 0; i < elements.numRows(); i++) {
-			this.components[i] = new Vector(elements.components[i]);
-		}
-	}
-}
+};
 
-Matrix.prototype = {
+mathnetics.extend(mathnetics.Matrix.prototype, {
 
 	/**Returns the i,j'th element of the matrix. Because (i,j) element is this.components[i-1].components[j-1], this method is especially uesful as shorthand.
 	@function {public Number} get
@@ -57,8 +31,8 @@ Matrix.prototype = {
 	@return true iff both are equal, false otherwise */
 	equalTo: function(matrix) {
 		var M = matrix;
-		if(matrix instanceof Vector) {
-			M = new Matrix(matrix);
+		if(matrix instanceof mathnetics.Vector) {
+			M = mathnetics.Matrix.create(matrix);
 		}
 		if(!this.sameSizeAs(M)) {
 			return false;
@@ -82,7 +56,7 @@ Matrix.prototype = {
 			rows[k] = this.components[k].map(func);
 			rows[k] = rows[k].components;
 		}
-		return new Matrix(rows);
+		return mathnetics.Matrix.create(rows);
 	},
 
 	/**Returns a specific row of the matrix as a Vector (which it is already)
@@ -90,7 +64,7 @@ Matrix.prototype = {
 	@param {int} i - the row you want
 	@return a new copy of the i'th row of the matrix; */
 	row: function(i) {
-		return new Vector(this.components[i-1]);
+		return mathnetics.Vector.create(this.components[i-1]);
 	},
 
 	/**Returns the j'th column as a vector.
@@ -102,7 +76,7 @@ Matrix.prototype = {
 		for(i = 1; i <= this.components.length; i++) {
 			column[i-1] = this.get(i,j);
 		}
-		return new Vector(column);
+		return mathnetics.Vector.create(column);
 	},
 
 	/**Get the number of rows in the matrix.
@@ -156,10 +130,10 @@ Matrix.prototype = {
 	@return true if matrix/vector can be multiplied from left or if matrix is a number; false otherwise 
 	@see multiply */
 	canMultiplyFromLeft: function(matrix) {
-		if(matrix instanceof Matrix) {
+		if(matrix instanceof mathnetics.Matrix) {
 			return (this.numCols() == matrix.numRows());
 		}
-		if(matrix instanceof Vector) {
+		if(matrix instanceof mathnetics.Vector) {
 			return (this.numCols() == matrix.dimension());
 		}
 		if(typeof matrix == 'number') {
@@ -188,7 +162,7 @@ Matrix.prototype = {
 			for(i = 1; i <= this.numRows(); i++) {
 				elements[i-1] = this.row(i).dot(M);
 			}
-			return new Vector(elements);
+			return mathnetics.Vector.create(elements);
 		}
 		var i = 1;
 		while(i <= this.numRows()) { 
@@ -198,7 +172,7 @@ Matrix.prototype = {
 			}
 			i++;
 		}
-		return new Matrix(elements);
+		return mathnetics.Matrix.create(elements);
 	},
 
 	/**Creates a new matrix that is the transpose of the original matrix.
@@ -212,7 +186,7 @@ Matrix.prototype = {
 				elements[i][j] = this.components[j].components[i];
 			}
 		}
-		return new Matrix(elements);
+		return mathnetics.Matrix.create(elements);
 	},
 
 	/**Tests to see if a matrix is square or not.
@@ -248,7 +222,7 @@ Matrix.prototype = {
 	@function {public Matrix} toUpperTriangular
 	@return the upper triangular version of the matrix as a new matrix object */
 	toUpperTriangular: function() {
-		var M = new Matrix(this);
+		var M = mathnetics.Matrix.create(this);
 		var i = 1, j = 1;
 		var rows = this.numRows(), cols = this.numCols();
 		while (i <= rows && j <= cols) {
@@ -315,7 +289,7 @@ Matrix.prototype = {
 		if(!this.invertible()) {
 			return null;
 		}
-		var M = this.augment(Matrix.I(this.numRows())).toUpperTriangular();
+		var M = this.augment(mathnetics.Matrix.I(this.numRows())).toUpperTriangular();
 		var thisRow = M.numRows();
 		while(thisRow > 0) {
 			M.components[thisRow-1] = M.row(thisRow).multiplyBy(1/M.get(thisRow,thisRow));
@@ -351,7 +325,7 @@ Matrix.prototype = {
 			}
 			i++;
 		}
-		return new Matrix(elements);
+		return mathnetics.Matrix.create(elements);
 	},
 
 	/**Augments a matrix to the right of a matrix.
@@ -377,7 +351,7 @@ Matrix.prototype = {
 				i++;
 			}
 		}
-		return new Matrix(thisMatrix);
+		return mathnetics.Matrix.create(thisMatrix);
 	},
 
 	/**Calculates the rank of a matrix.
@@ -448,7 +422,7 @@ Matrix.prototype = {
 			elements[i-1] = this.get(i,i);
 			i++;
 		}
-		return new Vector(elements);
+		return mathnetics.Vector.create(elements);
 	},
 
 	/**Returns the negative version of the current matrix.
@@ -467,10 +441,10 @@ Matrix.prototype = {
 			for(i = 1; i <= this.numRows(); i++) {
 				els[i-1] = this.get(i,1);
 			}
-			return new Vector(els);
+			return mathnetics.Vector.create(els);
 		}
 		if(this.numRows() == 1) {
-			return new Vector(this.components[0]);
+			return mathnetics.Vector.create(this.components[0]);
 		}
 		return null;
 	},
@@ -512,6 +486,45 @@ Matrix.prototype = {
 		return this;
 	},
 
+	/**Reset the elements of this matrix.  Used by constructor function.
+	@function {public mathnetics.Matrix} setElements
+	@paramset fromArray
+	@param {Number[]} arr - an array representation of the matrix; can be a 1D, 2D, or array of Vectors
+	@paramset fromVector
+	@param {Vector} vec - the vector which will become the single row of this matrix
+	@paramset clone
+	@param {Matrix} m - the matrix of which to create a clone
+	@return this matrix, with new elements 
+	@see mathnetics.Matrix.create */
+	setElements: function(elements) {
+		this.components = [];
+		if(elements instanceof Vector) {
+			this.components[0] = mathnetics.Vector.create(elements);
+		}
+		if(elements instanceof Array) {
+			if(typeof elements[0][0] != 'undefined') {
+				for(i = 0; i < elements.length; i++) {
+					this.components[i] = mathnetics.Vector.create(elements[i]);
+				}
+			} else {
+				this.components[0] = mathnetics.Vector.create(elements);
+			}
+		}
+		if(elements instanceof mathnetics.Matrix) {
+			for(i = 0; i < elements.numRows(); i++) {
+				this.components[i] = mathnetics.Vector.create(elements.components[i]);
+			}
+		}
+		return this;
+	},
+
+	/**Clones the current matrix into a new one.
+	@function {public mathnetics.Matrix} dup
+	@return a new matrix identical to this one */
+	dup: function() {
+		return mathnetics.Matrix.create(this);
+	},
+
 	/**Creates and returns a string representation of the matrix.
 	@function {public String} toString
 	@return the string representation of the matrix */
@@ -519,13 +532,25 @@ Matrix.prototype = {
 		return this.components.join("\n");
 	}
 
-} //end Matrix prototype
+}); //end Matrix prototype
+
+/**Creates a new matrix according to setElements.
+@function {public mathnetics.Matrix} mathnetics.Matrix.create
+@return a new matrix
+@constructor mathnetics.Matrix
+@see mathnetics.Matrix.setElements */
+mathnetics.Matrix.create = function(elements) {
+	var M = new mathnetics.Matrix();
+	return M.setElements(elements);
+};
+
+mathnetics.extend(mathnetics.Matrix, {
 
 /** Creates the Identity matrix of dimension N.
-@function {public static Matrix} I
+@function {public static mathnetics.Matrix} mathnetics.Matrix.I
 @param {int} n - the size of the identity matrix to be created
 @return an identity matrix of size n x n */
-Matrix.I = function(n) {
+I: function(n) {
 	var matrix = new Array(n);
 	for(i = 0; i < n; i++) {
 		var row = new Array(n);
@@ -537,15 +562,15 @@ Matrix.I = function(n) {
 		}
 		matrix[i] = row;
 	}
-	return new Matrix(matrix);
-}
+	return mathnetics.Matrix.create(matrix);
+},
 
 /** Creates a rows x cols matrix with all 0 elements.
-@function {public static Matrix} zero
+@function {public static mathnetics.Matrix} mathnetics.Matrix.zero
 @param {int} rows - the number of rows for the 0 matrix
 @param {int} cols - the number of columns
 @return a rows x cols 0 matrix */
-Matrix.zero = function(rows, cols) {
+zero: function(rows, cols) {
 	var elements = new Array();
 	for(i = 0; i < rows; i++) {
 		elements[i] = new Array();
@@ -553,39 +578,41 @@ Matrix.zero = function(rows, cols) {
 			elements[i][j] = 0;
 		}
 	}
-	return new Matrix(elements);
-}
+	return mathnetics.Matrix.create(elements);
+},
 
 /** Creates a rows x cols matrix with random elements between 0 and max or [0,1) if max not supplied
-@function {public static Matrix} random
+@function {public static mathnetics.Matrix} mathnetics.Matrix.random
 @param {int} rows - the number of rows
 @param {int} cols - the number of columns
 @param {optional int} max - the maximum value (included) that any element can have; if supplied, all elements will be integers */
-Matrix.random = function(rows, cols, max) {
-	return Matrix.zero(rows, cols).map(function() {
+random: function(rows, cols, max) {
+	return mathnetics.Matrix.zero(rows, cols).map(function() {
 		if(max) {
 			return Math.floor(Math.random()*(max+1));
 		}
 		return Math.random();
 		});
-}
+},
 
 /** Creates a diagonal matrix (off-diagonal elements are 0) from a given array of elements
-@function {public static Matrix} diagonal
+@function {public static mathnetics.Matrix} mathnetics.Matrix.diagonal
 @param {Object} elements - either a Vector or 1-D array that will become the diagonal elements of a matrix that has elements.length rows and columns
 @return a matrix with diagonal elements as specified */
-Matrix.diagonal = function(elements) {
+diagonal: function(elements) {
 	var els;
-	if(elements instanceof Vector) {
+	if(elements instanceof mathnetics.Vector) {
 		els = elements.components;
 	} else if(elements instanceof Array) {
 		els = elements;
 	} else {
 		return null;
 	}
-	var M = Matrix.I(els.length);
+	var M = mathnetics.Matrix.I(els.length);
 	for(i = 0; i < els.length; i++) {
 		M.setElement(i+1,i+1,els[i]);
 	}
 	return M;
 }
+
+});
