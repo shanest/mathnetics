@@ -31,21 +31,18 @@ Note that the transformation methods update the current AffineTransform object (
 dependencies = ['Matrix'];
 mathnetics.require(dependencies);
 
-/**Construct a new AffineTransform object, which contains a dimension, a transformation matrix (set by instance methods), and the applyTo method.
-@param {int} dim - the dimension (2 or 3) of the Affine Transformation.
-@constructor AffineTransform */
-function AffineTransform(dim) {
+mathnetics.AffineTransform = function() {
 
 	/**The dimension of the transformation (1 less than dimension of matrix).
 	@variable {private int} dim */
-	this.dim = dim;
+	this.dim = 0;
 	/**The transformation matrix that will be created when specific methods are called.
 	@variable {private Matrix} matrix */
-	this.matrix = new Matrix();
+	this.matrix = mathnetics.Matrix.create();
 
 }
 
-AffineTransform.prototype = {
+mathnetics.extend(mathnetics.AffineTransform.prototype, {
 
 	/**Applies the transformation to a {@link mathnetics.point2D} or {@link mathnetics.point3D} object.
 	@function {public Object} applyTo
@@ -55,7 +52,7 @@ AffineTransform.prototype = {
 	@param {mathnetics.point3D} point
 	@return a point2D or point3D object, depending on the dimension called */
 	applyTo: function(point) {
-		var vec = new Vector(point.components); //includes the extra "1" component in vector, which toVector does not
+		var vec = mathnetics.Vector.create(point.components); //includes the extra "1" component in vector, which toVector does not
 		return this.matrix.multiply(vec).toPoint();
 	},
 
@@ -75,7 +72,7 @@ AffineTransform.prototype = {
 		if(!this.invertible()) {
 			return null;
 		}
-		var T = new AffineTransform(this.dim);
+		var T = mathnetics.AffineTransform.create(this.dim);
 		T.matrix = this.matrix;
 		var M = T.matrix.minor(1,1,this.dim,this.dim);
 		var V = T.matrix.minor(1,this.dim+1,this.dim,1).toVector();
@@ -96,7 +93,7 @@ AffineTransform.prototype = {
 	@return this AffineTransform object, with the matrix updated to the translate3D matrix */
 	translate3D: function(tx, ty, tz) {
 		if(typeof this.matrix.components[0] == 'undefined' || this.matrix.numCols() != 4 ) {
-			this.matrix = Matrix.I(4);
+			this.matrix = mathnetics.Matrix.I(4);
 		}
 		for(i = 1; i <= arguments.length; i++) {
 			this.matrix.setElement(i,4,this.matrix.get(i,4)+arguments[i-1]);
@@ -112,7 +109,7 @@ AffineTransform.prototype = {
 	@return this AffineTransform object, with updated matrix */
 	translate2D: function(tx, ty) {
 		if(typeof this.matrix.components[0] == 'undefined' || this.matrix.numCols() != 3 ) {
-			this.matrix = Matrix.I(3);
+			this.matrix = mathnetics.Matrix.I(3);
 		}
 		for(i = 1; i <= arguments.length; i++) {
 			this.matrix.setElement(i,3,this.matrix.get(i,3)+arguments[i-1]);
@@ -144,10 +141,10 @@ AffineTransform.prototype = {
 			return this.rotate2D(theta);
 		}
 		if(axis instanceof Line) {
-			axis = new mathnetics.point3D(axis.direction.subtract(axis.base));
+			axis = mathnetics.point3D.create(axis.direction.subtract(axis.base));
 		}
 		if(axis instanceof Array) {
-			axis = new Vector(axis);
+			axis = mathnetics.Vector.create(axis);
 		}
 		if(axis.n != 3) {
 			return null;
@@ -161,7 +158,7 @@ AffineTransform.prototype = {
 			[0, 0, 0, 1]
 		]).snapTo(0);
 		if(typeof this.matrix.components[0] == 'undefined' || this.matrix.numCols() != 4 ) {
-			this.matrix = Matrix.I(4);
+			this.matrix = mathnetics.Matrix.I(4);
 		}
 		this.matrix = M.multiply(this.matrix);
 		return this;
@@ -174,13 +171,13 @@ AffineTransform.prototype = {
 	@see rotationZ */
 	rotate2D: function(theta) {
 		var c = Math.cos(theta), s = Math.sin(theta);
-		var M = Matrix.I(3);
+		var M = mathnetics.Matrix.I(3);
 		M.setElement(1,1,c);
 		M.setElement(1,2,-s);
 		M.setElement(2,1,s);
 		M.setElement(2,2,c);
 		if(typeof this.matrix.components[0] == 'undefined' || this.matrix.numCols() != 3 ) {
-			this.matrix = Matrix.I(3);
+			this.matrix = mathnetics.Matrix.I(3);
 		}
 		this.matrix =  M.snapTo(0).multiply(this.matrix);
 		return this;
@@ -194,13 +191,13 @@ AffineTransform.prototype = {
 	@return this AffineTransform object, with updated matrix */
 	rotationX: function(phi) {
 		var c = Math.cos(phi), s = Math.sin(phi);
-		var M = Matrix.I(4);
+		var M = mathnetics.Matrix.I(4);
 		M.setElement(2,2,c);
 		M.setElement(3,3,c);
 		M.setElement(2,3,s);
 		M.setElement(3,2,-s);
 		if(typeof this.matrix.components[0] == 'undefined' || this.matrix.numCols() != 4 ) {
-			this.matrix = Matrix.I(4);
+			this.matrix = mathnetics.Matrix.I(4);
 		}
 		this.matrix = M.snapTo(0).multiply(this.matrix);
 		return this;
@@ -212,13 +209,13 @@ AffineTransform.prototype = {
 	@return this AffineTransform object, with updated matrix */
 	rotationY: function(theta) {
 		var c = Math.cos(theta), s = Math.sin(theta);
-		var M = Matrix.I(4);
+		var M = mathnetics.Matrix.I(4);
 		M.setElement(1,1,c);
 		M.setElement(1,3,-s);
 		M.setElement(3,1,s);
 		M.setElement(3,3,c);
 		if(typeof this.matrix.components[0] == 'undefined' || this.matrix.numCols() != 4 ) {
-			this.matrix = Matrix.I(4);
+			this.matrix = mathnetics.Matrix.I(4);
 		}
 		this.matrix = M.snapTo(0).multiply(this.matrix);
 		return this;
@@ -230,13 +227,13 @@ AffineTransform.prototype = {
 	@return this AffineTransform object, with updated matrix */
 	rotationZ: function(psi) {
 		var c = Math.cos(psi), s = Math.sin(psi);
-		var M = Matrix.I(4);
+		var M = mathnetics.Matrix.I(4);
 		M.setElement(1,1,c);
 		M.setElement(1,2,-s);
 		M.setElement(2,1,s);
 		M.setElement(2,2,c);
 		if(typeof this.matrix.components[0] == 'undefined' || this.matrix.numCols() != 4 ) {
-			this.matrix = Matrix.I(4);
+			this.matrix = mathnetics.Matrix.I(4);
 		}
 		this.matrix = M.snapTo(0).multiply(this.matrix);
 		return this;
@@ -259,7 +256,7 @@ AffineTransform.prototype = {
 	newCoordinates: function(theta, phi) {
 		var cphi = Math.cos(phi), ctheta = Math.cos(theta);
 		var sphi = Math.sin(phi), stheta = Math.sin(theta);
-		var M = Matrix.I(4);
+		var M = mathnetics.Matrix.I(4);
 		M.setElement(1,1, ctheta*sphi);
 		M.setElement(1,2,stheta*sphi);
 		M.setElement(1,3,cphi);
@@ -269,11 +266,20 @@ AffineTransform.prototype = {
 		M.setElement(3,2,-stheta*cphi);
 		M.setElement(3,3,sphi);
 		if(typeof this.matrix.components[0] == 'undefined' || this.matrix.numCols() != 4 ) {
-			this.matrix = Matrix.I(4);
+			this.matrix = mathnetics.Matrix.I(4);
 		}
 		this.matrix = M.snapTo(0).multiply(this.matrix);
 		return this;
 	},
+
+	/**Clones the current AffineTransformation, including matrix. Useful for saving intermediate levels of transformation sequences.
+	@function {public mathnetics.AffineTransform} dup
+	@return the cloned AffineTransform */
+	dup: function() {
+		var AT = mathnetics.AffineTransform.create(this.dim);
+		AT.matrix = this.matrix.dup();
+		return AT;
+	}
 
 	/**Returns a string representation of the Affine Transformation matrix.
 	@function {public String} toString
@@ -283,4 +289,13 @@ AffineTransform.prototype = {
 		return this.matrix.toString();
 	}
 
-} //end AffineTransform prototype
+}); //end AffineTransform prototype
+
+/**Construct a new AffineTransform object, which contains a dimension, a transformation matrix (set by instance methods), and the applyTo method. Note, calling new mathnetics.AffineTransform() and then setting dim works.
+@param {int} dim - the dimension (2 or 3) of the Affine Transformation.
+@constructor mathnetics.AffineTransform.create */
+mathnetics.AffineTransform.create = function(dim) {
+	var AT = new mathnetics.AffineTransform();
+	AT.dim = dim;
+	return AT;
+};
