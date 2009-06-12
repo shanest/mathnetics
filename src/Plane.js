@@ -3,63 +3,22 @@ Dual-licensed under the MIT and GNU GPL Licenses.
 For more information, see LICENSE file */
 
 /**The Plane class provides a very useful definition of a plane.  A Plane object consists solely of a base point and a normal vector, thus implicitly representing the infinitude of a plane.
-@class Plane
+@class mathnetics.Plane
 */
 
 dependencies = ['Line'];
 mathnetics.require(dependencies);
 
-/**The constructor function for a new Plane.
-@paramset Clone
-@param {Plane} plane - the Plane object to duplicate
-@paramset Normal
-@param {mathnetics.point3D} base - the base point of the plane; if a Plane object, will create a duplicate of the plane
-@param {mathnetics.point3D} norm - (can also be a 3D Vector) the normal vector if only one vector is supplied
-@paramset Two Vectors
-@param {mathnetics.point3D} base - the base point of the plane; if a Plane object, will create a duplicate of the plane
-@param {mathnetics.point3D} v1 - (can also be a 3D Vector) one of two vectors that determines the normal
-@param {mathnetics.point3D} v2 - (can also be a 3D Vector) from two vectors, the normal becomes (v1 cross v2)
-@constructor Plane */
-function Plane(base, v1, v2) {
-
-	if(base instanceof Plane) {
-		return new Plane(base.base, base.norm);
-	}
-
+mathnetics.Plane = function() {
 	/**The "base" point of the plane. 
 	@variable {private mathnetics.point3D} base */
 	this.base = new mathnetics.point3D(0,0,0);
 	/**The normal vector of the plane, which wholly defines the Plane along with the base point.
 	@variable {private mathnetics.point3D} norm */
 	this.norm = new mathnetics.point3D(0,0,0);
+};
 
-	if(!(base.dimension() && v1.dimension())) {
-		return null;
-	}
-	if(base.n > 3 || v1.n > 3) {
-		return null;
-	}
-	
-	if(base.n == 2) {
-		//handles mathnetics.point2D or Vector object
-		this.base = new mathnetics.point3D(base.get(1), base.get(2), 0);
-	} else {
-		if(base instanceof mathnetics.point3D) {
-			this.base = new mathnetics.point3D(base);
-		} else if(base instanceof Vector) {
-			this.base = new mathnetics.point3D(base.get(1), base.get(2), base.get(3));
-		}
-	}
-
-	if(v2) {
-		this.norm = v1.cross(v2).normalize().toPoint();
-	} else {
-		this.norm = v1.normalize().toPoint();
-	}
-
-}
-
-Plane.prototype = {
+mathnetics.extend(mathnetics.Plane.prototype, {
 
 	/**Tests whether two planes are equal.
 	@function {public boolean} equalTo
@@ -76,8 +35,8 @@ Plane.prototype = {
 	@param {Number} dz - the z translation
 	@return the translated plane as a new Plane object */
 	translate: function(dx, dy, dz) {
-		var base = new mathnetics.point3D(this.base.x + dx, this.base.y + dy, this.base.z + dz);
-		return new Plane(base, this.norm);
+		var base = mathnetics.point3D.create(this.base.x + dx, this.base.y + dy, this.base.z + dz);
+		return mathnetics.Plane.create(base, this.norm);
 	},
 
 	/**Tests to see if the plane is parallel to a given Plane or Line.
@@ -88,10 +47,10 @@ Plane.prototype = {
 	@param {Line} line - the line to check to see if parallel
 	@return true if parallel, false otherwise */
 	isParallel: function(obj) {
-		if(obj instanceof Plane) {
+		if(obj instanceof mathnetics.Plane) {
 			var theta = this.norm.angleBetween(obj.norm);
 			return (Math.abs(theta) < mathnetics.zero || Math.abs(theta - Math.PI) < mathnetics.zero);
-		} else if(obj instanceof Line) {
+		} else if(obj instanceof mathnetics.Line) {
 			return this.norm.isPerpendicular(obj.direction);
 		} else {
 			return null;
@@ -169,12 +128,12 @@ Plane.prototype = {
 		if(!this.intersects(obj)) {
 			return null;
 		}
-		if(obj instanceof Line) { //obj is a line
+		if(obj instanceof mathnetics.Line) { //obj is a line
 			var mult = this.norm.dot(this.base.subtract(obj.base)) / this.norm.dot(obj.direction);
 			var vec = obj.base.add(obj.direction.multiplyBy(mult));
-			return new mathnetics.point3D(vec.get(1),vec.get(2),vec.get(3));
+			return mathnetics.point3D.create(vec.get(1),vec.get(2),vec.get(3));
 		}
-		if(obj instanceof Plane) {
+		if(obj instanceof mathnetics.Plane) {
 			var direction = this.norm.cross(obj.norm).normalize();
 			var B = this.base, N = this.norm, O = obj.norm, C = obj.base;
 			//To find a base point, find one coordinate that has a value of 0
@@ -200,7 +159,7 @@ Plane.prototype = {
 				//cycling depending on which element we set to 0 above
 				base.push((i == j) ? 0 : intersection[(j + (5-i)%3)%3]);
 			}
-			return new Line(new Vector(base), direction);
+			return mathnetics.Line.create(mathnetics.Vector.create(base), direction);
 		}
 	},
 
@@ -209,16 +168,16 @@ Plane.prototype = {
 	@param {mathnetics.point3D} point - (can also be a 3D Vector) the point to which to find the closest point in the plane
 	@return mathnetics.point3D or Vector (depending on type of point above) that is the closest point on the plane to point */
 	pointClosestTo: function(point) {
-		if(!(point instanceof mathnetics.point3D || point instanceof Vector)) {
+		if(!(point instanceof mathnetics.point3D || point instanceof mathnetics.Vector)) {
 			return null;
 		}
 		var P = point, B = this.base, N = this.norm;
 		var dot = B.subtract(P).dot(N);
 		var vec = P.add(N.multiplyBy(dot));
 		if(point instanceof mathnetics.point3D) {
-			return new mathnetics.point3D(vec.get(1), vec.get(2), vec.get(3));
-		} else if(point instanceof Vector) {
-			return new Vector(vec);
+			return mathnetics.point3D.create(vec.get(1), vec.get(2), vec.get(3));
+		} else if(point instanceof mathnetics.Vector) {
+			return mathnetics.Vector.create(vec);
 		}
 	},
 
@@ -232,7 +191,53 @@ Plane.prototype = {
 		var P = B.subtract(C);
 		var newB = C.add(P.rotate(deg, line));
 		var newN = N.rotate(deg, line);
-		return new Plane(newB, newN);
+		return mathnetics.Plane.create(newB, newN);
+	},
+
+	/**Resets the base and normal vectors of the Plane. Called by constructor.
+	@function {public mathnetics.Plane} setVectors
+	@paramset Clone
+	@param {Plane} plane - the Plane object to duplicate
+	@paramset Normal
+	@param {mathnetics.point3D} base - the base point of the plane; if a Plane object, will create a duplicate of the plane
+	@param {mathnetics.point3D} norm - (can also be a 3D Vector) the normal vector if only one vector is supplied
+	@paramset Two Vectors
+	@param {mathnetics.point3D} base - the base point of the plane; if a Plane object, will create a duplicate of the plane
+	@param {mathnetics.point3D} v1 - (can also be a 3D Vector) one of two vectors that determines the normal
+	@param {mathnetics.point3D} v2 - (can also be a 3D Vector) from two vectors, the normal becomes (v1 cross v2)
+	@return this Plane, updated */
+	setVectors: function(base, v1, v2) {
+
+		if(base instanceof mathnetics.Plane) {
+			return mathnetics.Plane.create(base.base, base.norm);
+		}
+
+		if(!(base.dimension() && v1.dimension())) {
+			return null;
+		}
+		if(base.n > 3 || v1.n > 3) {
+			return null;
+		}
+	
+		if(base.n == 2) {
+			//handles mathnetics.point2D or Vector object
+			this.base = mathnetics.point3D.create(base.get(1), base.get(2), 0);
+		} else {
+			if(base instanceof mathnetics.point3D) {
+				this.base = mathnetics.point3D.create(base);
+			} else if(base instanceof mathnetics.Vector) {
+				this.base = mathnetics.point3D.create(base.get(1), base.get(2), base.get(3));
+			}
+		}
+
+		if(v2) {
+			this.norm = v1.cross(v2).normalize().toPoint();
+		} else {
+			this.norm = v1.normalize().toPoint();
+		}
+
+		return this;
+
 	},
 
 	/**Returns a string representation of the Plane.
@@ -242,26 +247,36 @@ Plane.prototype = {
 		return "base: " + this.base + ", normal: " + this.norm;
 	}
 
-} //end Plane prototype
+}); //end Plane prototype
 
-/**The XY-plane.  Base = (0,0,0), Direction = Vector.k
-@variable {public static Plane} XY */
-Plane.XY = new Plane(mathnetics.point3D.zero, Vector.k);
-/**Same as Plane.XY
-@variable {public static Plane} YX 
-@see Plane.XY */
-Plane.YX = Plane.XY;
-/**The YZ-plane.  Base = (0,0,0), Direction = Vector.i
-@variable {public static Plane} YZ */
-Plane.YZ = new Plane(mathnetics.point3D.zero, Vector.i);
-/**Same as Plane.YZ
-@variable {public static Plane} ZY
-@see Plane.YZ */
-Plane.ZY = Plane.YZ;
-/**The ZX-plane.  Base = (0,0,0), Direction = Vector.j
-@variable {public static Plane} ZX */
-Plane.ZX = new Plane(mathnetics.point3D.zero, Vector.j);
-/**Same as Plane.ZX
-@variable {public static Plane} XZ
-@see Plane.ZX */
-Plane.XZ = Plane.ZX;
+/**The constructor function for a new Plane.
+@constructor mathnetics.Plane 
+@see mathnetics.Plane.create */
+mathnetics.Plane.create = function(base, v1, v2) {
+	var P = new mathnetics.Plane();
+	return P.setVectors(base, v1, v2);
+};
+
+mathnetics.extend(mathnetics.Plane, {
+	/**The XY-plane.  Base = (0,0,0), Direction = Vector.k
+	@variable {public static Plane} XY */
+	XY: mathnetics.Plane.create(mathnetics.point3D.zero, Vector.k),
+	/**Same as Plane.XY
+	@variable {public static Plane} YX 
+	@see Plane.XY */
+	YX: mathnetics.Plane.XY,
+	/**The YZ-plane.  Base = (0,0,0), Direction = Vector.i
+	@variable {public static Plane} YZ */
+	YZ: mathnetics.Plane.create(mathnetics.point3D.zero, Vector.i),
+	/**Same as Plane.YZ
+	@variable {public static Plane} ZY
+	@see Plane.YZ */
+	ZY: mathnetics.Plane.YZ,
+	/**The ZX-plane.  Base = (0,0,0), Direction = Vector.j
+	@variable {public static Plane} ZX */
+	ZX: mathnetics.Plane.create(mathnetics.point3D.zero, Vector.j),
+	/**Same as Plane.ZX
+	@variable {public static Plane} XZ
+	@see Plane.ZX */
+	XZ: mathnetics.Plane.ZX
+});
