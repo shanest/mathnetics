@@ -3,32 +3,18 @@ Dual-licensed under the MIT and GNU GPL Licenses.
 For more information, see LICENSE file */
 
 /**Defines a mathematical group, which is a Set, coupled with an operation.
-@class Group */
+@class mathnetics.Group */
 
 dependencies = ['Set'];
 mathnetics.require(dependencies);
 
-/**Generator function for a new group (mathematical).
-@paramset fromArray
-@param {Array} elements - the set of elements that defines the set in the group
-@param {Function} operator - if a function, must take two parameters (elements of the set); if a string: 'addition' or 'multiplication'
-@paramset fromSet
-@param {Set} set - the set to use in the Group
-@param {Function} operator - if a function, must take two parameters (elements of the set); if a string: 'addition' or 'multiplication'
-@constructor Group
-*/
-
-function Group(elements, operator) {
-	if(elements instanceof Array) {
-		this.set = new Set(elements);
-	}
-	if(elements instanceof Set) {
-		this.set = elements;
-	}
+mathnetics.Group = function() {
+	/**The set representing the group.
+	@variable {mathnetics.Set} set */
+	this.set = mathnetics.Set.empty();
 	/**Either a function, or a string 'addition' or 'multiplication'
 	@variable {Function} operation */
-	this.operation = operator;
-
+	this.operation = null;
 	//booleans for each of the 4 axioms of a well-formed group
 	/**Whether or not the group has closure 
 	@variable {private boolean} hasClosure */
@@ -45,9 +31,17 @@ function Group(elements, operator) {
 	/**the identity element, if it exists 
 	@variable {private Number} identity */
 	this.identity;
+};
+
+/**Generator function for a new group (mathematical).
+@param {Function} operator - if a function, must take two parameters (elements of the set); if a string: 'addition' or 'multiplication'
+@constructor Group
+*/
+function Group(elements, operator) {
+
 }
 
-Group.prototype = {
+mathnetics.extend(mathnetics.Group.prototype, {
 
 
 	/**Determines if the group does or does not have closure and sets the boolean hasClosure.
@@ -217,6 +211,45 @@ Group.prototype = {
 				return el1 + el2;
 			}
 		}
-	}
-}
+	},
 
+	/**Resets the group's current set. Used by constructor.
+	@function {public mathnetics.Group} setSet
+	@paramset fromArray
+	@param {Array} elements - the set of elements that defines the set in the group
+	@paramset fromSet
+	@param {Set} set - the set to use in the Group
+	@return this Group, updated with new set */
+	setSet: function(elements) {
+		if(elements instanceof Array) {
+			this.set = mathnetics.Set.create(elements);
+		}
+		if(elements instanceof mathnetics.Set) {
+			this.set = elements;
+		}
+		return this;
+	},
+
+	/**Sets the operator of the group.
+	@function {public mathnetics.Group} setOperation
+	@param {Function} operator - if a function, must take two parameters (elements of the set); if a string: 'addition' or 'multiplication'
+	@return this Group with updated operation */
+	setOperation: function(operator) {
+		//add error checking for function
+		this.operation = operator;
+		return this;
+	},
+
+	/**Duplicates the current group.
+	@function {public mathnetics.Group} dup
+	@return a clone of current group */
+	dup: function() {
+		return mathnetics.Group.create(this.set, this.operation);
+	}
+
+}); //end Group prototype
+
+mathnetics.Group.create = function(elements, operator) {
+	var G = new mathnetics.Group();
+	return G.setSet(elements).setOperation(operator);
+};
