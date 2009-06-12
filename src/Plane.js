@@ -240,6 +240,13 @@ mathnetics.extend(mathnetics.Plane.prototype, {
 
 	},
 
+	/**Makes a clone of this Plane.
+	@function {public mathnetics.Plane} dup
+	@return a new Plane identical to this one */
+	dup: function() {
+		return mathnetics.Plane.create(this.base, this.normal);
+	},
+
 	/**Returns a string representation of the Plane.
 	@function {public String} toString
 	@return the string version of the plane */
