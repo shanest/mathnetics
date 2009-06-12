@@ -480,8 +480,7 @@ mathnetics.extend(mathnetics.Vector.prototype, {
 }); //end Vector prototype
 
 /**Constructor function.  Takes an Array or a Vector and creates a Vector object.
-@function {public static mathnetics.Vector} mathnetics.Vector.create
-@constructor mathnetics.Vector 
+@constructor mathnetics.Vector.create 
 @see mathnetics.Vector.setElements */
 mathnetics.Vector.create = function(elements) {
 	var V = new mathnetics.Vector();

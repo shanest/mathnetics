@@ -224,7 +224,7 @@ mathnetics.extend(mathnetics.Set.prototype, {
 	},
 
 	/**Sets elements of array. If no arguments passed, turns this Set into empty set. Called by constructor.
-	@function {public mathnetics.Set}
+	@function {public mathnetics.Set} setElements
 	@paramset fromArray
 	@param {optional Array} elements - the elements of your set
 	@paramset clone
@@ -255,7 +255,7 @@ mathnetics.extend(mathnetics.Set.prototype, {
 }); //end Set prototype
 
 /**Constructor function for a new set. If no parameters supplied, constructs an empty (null) set
-@constructor mathnetics.Set 
+@constructor mathnetics.Set.create 
 @see mathnetics.Set.setElements */
 mathnetics.Set.create = function(elements) {
 	var S = new mathnetics.Set();

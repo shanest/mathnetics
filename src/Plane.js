@@ -257,8 +257,8 @@ mathnetics.extend(mathnetics.Plane.prototype, {
 }); //end Plane prototype
 
 /**The constructor function for a new Plane.
-@constructor mathnetics.Plane 
-@see mathnetics.Plane.create */
+@constructor mathnetics.Plane.create 
+@see mathnetics.Plane.setVectors */
 mathnetics.Plane.create = function(base, v1, v2) {
 	var P = new mathnetics.Plane();
 	return P.setVectors(base, v1, v2);

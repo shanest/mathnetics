@@ -25,7 +25,7 @@ p3D =<br />
 (NOTE: [1 1 1 1] is the column matrix representation of the new point3D(1,1,1) object)
 </code><br />
 Note that the transformation methods update the current AffineTransform object (allowing compound transformations) while the invert() method creates a new AffineTransform object with the opposite transformation as its matrix.
-@class AffineTransform
+@class mathnetics.AffineTransform
 */
 
 dependencies = ['Matrix'];

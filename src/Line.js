@@ -236,11 +236,12 @@ mathnetics.extend(mathnetics.Line.prototype, {
 	dup: function() {
 		return mathnetics.Line.create(this.base, this.direction);
 	},
+
 	/**Sets base and direction vectors of line.  Used by constructor.
 	@function {public mathnetics.Line} setVectors
 	@paramset standard
 	@param {mathnetics.Vector} base - the base point of the Line; can be a mathnetics.point2D, mathnetics.point3D or Vector (of dimension 2 or 3) object.  The actual base point of the Line will be a point3D object.
-	@param {mathnetics.Vector} direction the direction of the Line; can be a mathnetics.point2D, mathnetics.point3D or Vector.  Actual direction will be a normalized point3D object.
+	@param {mathnetics.Vector} direction - the direction of the Line; can be a mathnetics.point2D, mathnetics.point3D or Vector.  Actual direction will be a normalized point3D object.
 	@paramset clone
 	@param {Line} line - the line to clone as a new one
 	@return this Line with updated/reset vectors */
@@ -292,7 +293,7 @@ mathnetics.extend(mathnetics.Line.prototype, {
 }); //end Line prototype
 
 /**The constructor function for a new Line.  If only a Line object is supplied as a parameter, a duplicate of that Line will be created.
-@constructor mathnetics.Line 
+@constructor mathnetics.Line.create 
 @see mathnetics.Line.setVectors*/
 mathnetics.Line.create = function(base, direction) {
 	var L = new mathnetics.Line();

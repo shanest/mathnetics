@@ -535,9 +535,7 @@ mathnetics.extend(mathnetics.Matrix.prototype, {
 }); //end Matrix prototype
 
 /**Creates a new matrix according to setElements.
-@function {public mathnetics.Matrix} mathnetics.Matrix.create
-@return a new matrix
-@constructor mathnetics.Matrix
+@constructor mathnetics.Matrix.create
 @see mathnetics.Matrix.setElements */
 mathnetics.Matrix.create = function(elements) {
 	var M = new mathnetics.Matrix();
