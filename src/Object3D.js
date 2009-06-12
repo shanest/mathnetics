@@ -13,15 +13,7 @@ This model, while slightly less intuitive, allows Lines and other 3-D objects to
 dependencies = ['point3D', 'Plane'];
 mathnetics.require(dependencies);
 
-mathnetics.extend({
-
-/**Creates a new 3D Object.
-@param {mathnetics.point3D[]} vertices - an array of mathnetics.point3D objects that are the vertices of the object
-@param {int[]} faces - the array (2-dimensional!) of faces (i.e. [[0,1,2,0],[2,3,4,2]] defines two faces connecting 
-vertices[0],vertices[1] and vertices[2], etc.)
-@constructor Object3D */
-Object3D: function(vertices, faces) {
-
+mathnetics.Object3D = function() {
 	/**The list of vertices of the 3D object. An array of mathnetics.point3D's.  Order is EXTREMELY important.
 	@variable {private mathnetics.point3D[]} vertices */
 	this.vertices = new Array();
@@ -29,19 +21,9 @@ Object3D: function(vertices, faces) {
 	@variable {private mathnetics.point3D[]} vertices2D */
 	this.vertices2D = new Array();
 	/**The array of faces.  A face is an ordered list of vertices to connect with line segments.  [0, 4, 2, 3] for example, connects vertices 0, 4, 2, 3 and 0.  This will be a 2-D array.
-	@variable {private int[]} faces */
+	@variable {private int[][]} faces */
 	this.faces = new Array();
-
-	if(vertices instanceof Array) {
-		this.vertices = vertices;
-	}
-	if(faces instanceof Array) {
-		this.faces = faces;
-	}
-
-}
-
-});
+};
 
 mathnetics.extend(mathnetics.Object3D.prototype, {
 
@@ -77,7 +59,7 @@ mathnetics.extend(mathnetics.Object3D.prototype, {
 	@see AffineTransform.newCoordinates */
 	viewIn: function(theta, phi) {
 		var i = 0;
-		var T = new AffineTransform(3).newCoordinates(theta, phi);
+		var T = mathnetics.AffineTransform.create(3).newCoordinates(theta, phi);
 		while(i < this.vertices.length) {
 			this.vertices2D[i] = T.applyTo(this.vertices[i]);
 			i++;
@@ -95,7 +77,7 @@ mathnetics.extend(mathnetics.Object3D.prototype, {
 		while(i < this.vertices2D.length) {
 			var point = this.vertices2D[i];
 			var mult = focus / (focus - point.x);
-			this.vertices2D[i] = new mathnetics.point2D(mult*point.y, mult*point.z);
+			this.vertices2D[i] = mathnetics.point2D.create(mult*point.y, mult*point.z);
 	 		i++;
 		}
 		return this;
@@ -131,6 +113,36 @@ mathnetics.extend(mathnetics.Object3D.prototype, {
 		return this.toEach(function(x) { return x.translate(tx, ty, tz); });
 	},
 
+	/**Resets vertices array.  Used by constructor.
+	@function {public mathnetics.Object3D} setVertices
+	@param {mathnetics.point3D[]} vertices - an array of mathnetics.point3D objects that are the vertices of the object
+	@return this Object3D updated */
+	setVertices: function(vertices) {
+		if(vertices instanceof Array) {
+			this.vertices = vertices;
+		}
+		return this;
+	},
+
+	/**Resets faces array. Used by constructor.
+	@function {public mathnetics.Object3D} setFaces
+	@param {int[][]} faces - the array (2-dimensional!) of faces (i.e. [[0,1,2,0],[2,3,4,2]] defines two faces connecting 
+	vertices[0],vertices[1] and vertices[2], etc.)
+	@return this Object3D updated */
+	setFaces: function(faces) {
+		if(faces instanceof Array) {
+			this.faces = faces;
+		}
+		return this;
+	},
+
+	/**Clones current object3D.
+	@function {public mathnetics.Object3D} dup
+	@return new, identical Object3D */
+	dup: function() {
+		return mathnetics.Object3D.create(this.vertices, this.faces);
+	},
+
 	/**Generates a string representation of the Object (a face-vertex mesh).
 	@function {public String} toString
 	@return a list of all the vertices and faces */
@@ -139,6 +151,15 @@ mathnetics.extend(mathnetics.Object3D.prototype, {
 	}
 
 }); //end Object3D prototype
+
+/**Creates a new 3D Object.
+@param {mathnetics.point3D[]} vertices
+@param {int[][]} faces
+@constructor mathnetics.Object3D.create */
+mathnetics.Object3D.create = function(vertices, faces) {
+	var O = new mathnetics.Object3D();
+	return O.setVertices(vertices).setFaces(faces);
+};
 
 mathnetics.extend(mathnetics.Object3D, {
 
@@ -154,21 +175,21 @@ Cube: function(side, center) {
 	var cx = center.x, cy = center.y, cz = center.z;
 	var length = side/2;
 	var verts = new Array(), faces = new Array();
-	verts[0] = new mathnetics.point3D(length, -length, length);
-	verts[1] = new mathnetics.point3D(length, length, length);
-	verts[2] = new mathnetics.point3D(-length, length, length);
-	verts[3] = new mathnetics.point3D(-length, -length, length);
-	verts[4] = new mathnetics.point3D(+length, -length, -length);
-	verts[5] = new mathnetics.point3D(+length, length, -length);
-	verts[6] = new mathnetics.point3D(-length, length, -length);
-	verts[7] = new mathnetics.point3D(-length, -length, -length);
+	verts[0] = mathnetics.point3D.create(length, -length, length);
+	verts[1] = mathnetics.point3D.create(length, length, length);
+	verts[2] = mathnetics.point3D.create(-length, length, length);
+	verts[3] = mathnetics.point3D.create(-length, -length, length);
+	verts[4] = mathnetics.point3D.create(+length, -length, -length);
+	verts[5] = mathnetics.point3D.create(+length, length, -length);
+	verts[6] = mathnetics.point3D.create(-length, length, -length);
+	verts[7] = mathnetics.point3D.create(-length, -length, -length);
 	faces[0] = [0, 4, 5, 1, 0];
 	faces[1] = [1, 5, 6, 2, 1];
 	faces[2] = [2, 6, 7, 3, 2];
 	faces[3] = [3, 7, 4, 0, 3];
 	faces[4] = [4, 5, 6, 7, 4];
 	faces[5] = [0, 1, 2, 3, 0];
-	return (new mathnetics.Object3D(verts, faces)).translate(cx, cy, cz);
+	return (mathnetics.Object3D.create(verts, faces)).translate(cx, cy, cz);
 },
 
 /**Creates a new Sphere as an Object3D object.
@@ -179,7 +200,7 @@ Cube: function(side, center) {
 @return a new Object3D that defines a sphere as outlined above */
 Sphere: function(rad, cent, segments) {
 
-	var o = new mathnetics.Object3D([], []);
+	var o = mathnetics.Object3D.create([], []);
 	var segs = 5;
 	if(segments) {
 		segs = segments / 2;
@@ -198,7 +219,7 @@ Sphere: function(rad, cent, segments) {
 		for(j = 0; j < numSeparators; j++) {
 			var z = -1*r*Math.sin(segmentRad*j);
 			var x = r * Math.cos(segmentRad*j);
-			o.vertices.push(new mathnetics.point3D(x, y, z));
+			o.vertices.push(mathnetics.point3D.create(x, y, z));
 		}
 	}
 
@@ -221,8 +242,8 @@ Sphere: function(rad, cent, segments) {
 	}
 
 	//add the two "endpoints" and triangles to them
-	o.vertices.push(new mathnetics.point3D(0, -radius, 0));
-	o.vertices.push(new mathnetics.point3D(0, radius, 0));
+	o.vertices.push(mathnetics.point3D.create(0, -radius, 0));
+	o.vertices.push(mathnetics.point3D.create(0, radius, 0));
 	for(i = 0; i < numSeparators - 1; i++) {
 		var i1 = i, i2 = i+1;
 		var i3 = o.vertices.length - 2;
@@ -260,7 +281,7 @@ Line: function(points) {
 				segments[i] = [i, i+1];
 			}
 		}
-		return new mathnetics.Object3D(pts, segments);
+		return mathnetics.Object3D.create(pts, segments);
 	}
 	return null;
 },

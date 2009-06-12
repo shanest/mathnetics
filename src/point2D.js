@@ -7,7 +7,7 @@ mathnetics.require(dependencies);
 
 /**The point2D class defines a point in 2-dimensional Euclidean space via homogeneous coordinates (i.e. as a 3-vector (x,y,1)).  This allows affine transformations to be applied to 2-D points via matrix multiplication.
 @class mathnetics.point2D
-@extends Vector
+@extends mathnetics.Vector
 */
 
 mathnetics.point2D = function() {
@@ -26,7 +26,7 @@ mathnetics.point2D = function() {
 	this.components = [this.x, this.y, 1];
 };
 
-mathnetics.extend(mathnetics.point2D.prototype, new Vector);
+mathnetics.extend(mathnetics.point2D.prototype, new mathnetics.Vector);
 
 mathnetics.extend(mathnetics.point2D.prototype, {
 
@@ -112,7 +112,7 @@ toString: function() {
 });
 
 /**Constructor function.  Makes a new 2D point (x,y,1).
-@constructor mathnetics.point2D 
+@constructor mathnetics.point2D.create 
 @see mathnetics.point2D.setComponents */
 mathnetics.point2D.create = function(x, y) {
 	var p = new mathnetics.point2D();

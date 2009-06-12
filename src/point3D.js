@@ -7,7 +7,7 @@ mathnetics.require(dependencies);
 
 /** The point3D class defines a point in 3-dimensional Euclidean space via homogeneous coordinates (i.e. as a 4-vector (x,y,z,1)).  This allows affine transformations to be applied to 3-D points via matrix multiplication.
 @class mathnetics.point3D
-@extends Vector
+@extends mathnetics.Vector
 */
 
 mathnetics.point3D = function() {
@@ -29,7 +29,7 @@ mathnetics.point3D = function() {
 	this.components = [this.x, this.y, this.z, 1];
 };
 
-mathnetics.extend(mathnetics.point3D.prototype, new Vector);
+mathnetics.extend(mathnetics.point3D.prototype, new mathnetics.Vector);
 
 mathnetics.extend(mathnetics.point3D.prototype, {
 
