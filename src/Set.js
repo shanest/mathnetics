@@ -4,36 +4,18 @@ For more information, see LICENSE file */
 
 /**A mathematical set, essentially nothing but a collection of objects.  The class is essentially a wrapper for an array which defines
 some traditional operations done on sets, such as cartesianProduct.
-@class Set */
+@class mathnetics.Set */
 
-/**Constructor function for a new set. If no parameters supplied, constructs an empty (null) set
-@paramset fromArray
-@param {optional Array} elements - the elements of your set
-@paramset clone
-@param {optional Set} set - the set to clone
-@constructor Set */
-function Set(elements) {
+mathnetics.Set = function() {
 	/**the elements of the set 
 	@variable {Array} elements */
 	this.elements = new Array();
 	/**the cardinality ("dimension") of the set 
 	@variable {int} cardinality */
 	this.cardinality = 0;
-	if(elements) {
-		if(elements instanceof Array) {
-			this.elements = elements;
-		}
-		if(elements instanceof Set) {
-			this.elements = elements.elements.slice();
-		}
-		this.cardinality = this.elements.length;
-	} else {
-		this.elements = new Array();
-		this.cardinality = 0;
-	}
-}
+};
 
-Set.prototype = {
+mathnetics.extend(mathnetics.Set.prototype, {
 
 
 	/**Determines if a specified element is in the set of this group.
@@ -147,7 +129,7 @@ Set.prototype = {
 	@param {Set} set - the set with which to find the intersection
 	@return the intersection of the two sets as a new set */
 	intersection: function(set) {
-		var newSet = new Set();
+		var newSet = mathnetics.Set.create();
 		var testElement;
 		var i = 0;
 		while(i < set.cardinality) {		
@@ -165,7 +147,7 @@ Set.prototype = {
 	@param {Set} set - the set to which to find the complement
 	@return a new set that is the specified complement */
 	complement: function(set) {
-		var newSet = new Set(this);
+		var newSet = this.dup();
 		var testElement;
 		var i = 0;
 		while(i < set.cardinality) {
@@ -183,7 +165,7 @@ Set.prototype = {
 	@param {Set} set - the set with which to compute the product
 	@return a new set that is the Cartesian product of the other two */
 	cartesianProduct: function(set) {
-		var newSet = new Set();
+		var newSet = mathnetics.Set.create();
 		var el1, el2;
 		var i = 0, j= 0;
 		while(i < this.cardinality) {
@@ -234,6 +216,35 @@ Set.prototype = {
 		}
 	},
 
+	/**Creates a new set identical to current one.
+	@function {public mathnetics.Set} dup
+	@return a clone of current set */
+	dup: function() {
+		return mathnetics.Set.create(this.elements);
+	},
+
+	/**Sets elements of array. If no arguments passed, turns this Set into empty set. Called by constructor.
+	@function {public mathnetics.Set}
+	@paramset fromArray
+	@param {optional Array} elements - the elements of your set
+	@paramset clone
+	@param {optional Set} set - the set to clone
+	@return this Set, updated */
+	setElements: function(elements) {
+		if(elements) {
+			if(elements instanceof Array) {
+				this.elements = elements;
+			}
+			if(elements instanceof Set) {
+				this.elements = elements.elements.slice();
+			}
+			this.cardinality = this.elements.length;
+		} else {
+			this.elements = new Array();
+			this.cardinality = 0;
+		}
+	},
+
 	/**Returns a string representation of the set (and subsets).
 	@function {public String} toString
 	@return the string representatoin of the set.*/
@@ -241,20 +252,32 @@ Set.prototype = {
 		return "{" + this.elements.join(" ") + "}";
 	}
 
-} //end Set prototype
+}); //end Set prototype
 
-/**the empty set {}
-@variable {public static Set} empty */
-Set.empty = new Set();
+/**Constructor function for a new set. If no parameters supplied, constructs an empty (null) set
+@constructor mathnetics.Set 
+@see mathnetics.Set.setElements */
+mathnetics.Set.create = function(elements) {
+	var S = new mathnetics.Set();
+	return S.setElements(elements);
+};
 
-/**Creates a set with n zero elements
-@function {public static Set} zero
-@param {int} n - the number of elements in the zero set 
-@return a set of n elements all equal to 0 */
-Set.zero = function(n) {
-	var elements = new Array();
-	for(i = 0; i < n; i++) {
-		elements[i] = 0;
+mathnetics.extend(mathnetics.Set, {
+
+	/**the empty set {}
+	@variable {public static Set} empty */
+	empty: new mathnetics.Set(),
+
+	/**Creates a set with n zero elements
+	@function {public static Set} zero
+	@param {int} n - the number of elements in the zero set 
+	@return a set of n elements all equal to 0 */
+	zero: function(n) {
+		var elements = new Array();
+		for(i = 0; i < n; i++) {
+			elements[i] = 0;
+		}
+		return mathnetics.Set.create(elements);
 	}
-	return new Set(elements);
-}
+
+});
