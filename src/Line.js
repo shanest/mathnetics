@@ -5,63 +5,23 @@ For more information, see LICENSE file */
 /**The Line class defines a new object type for a line.  It is in a sense a "point-slope" definition of a line.
 A Line has a base point and a direction, the direction being a unit vector.
 This is an effective way of defining a line in a way that does not limit it to any specific segment and allows for Affine Transformations to be applied.
-@class Line
+@class mathnetics.Line
 */
 
 dependencies = ['point2D','point3D'];
 mathnetics.require(dependencies);
 
-/**The constructor function for a new Line.  If only a Line object is supplied as a parameter, a duplicate of that Line will be created.
-@paramset standard
-@param {Vector} base - the base point of the Line; can be a mathnetics.point2D, mathnetics.point3D or Vector (of dimension 2 or 3) object.  The actual base point of the Line will be a point3D object.
-@param {Vector} direction the direction of the Line; can be a mathnetics.point2D, mathnetics.point3D or Vector.  Actual direction will be a normalized point3D object.
-@paramset clone
-@param {Line} line - the line to clone as a new one
-@constructor Line */
-function Line(base, direction) {
-
-	if(base instanceof Line) {
-		return new Line(base.base, base.direction);
-	}
-
+mathnetics.Line = function() {
 	/**The "anchor" point.
 	@variable {mathnetics.point3D} base */
-	this.base = new mathnetics.point3D(0,0,0);
+	this.base = mathnetics.point3D.create(0,0,0);
 	/**The direction of the line; will be a unit vector. Use mathnetics.point3D object for this to allow Affine Transformations.
 	@variable {mathnetics.point3D} direction */
-	this.direction = new mathnetics.point3D(0,0,0);
+	this.direction = mathnetics.point3D.create(0,0,0);
+};
 
-	if(!(base.dimension() && direction.dimension())) {
-		return null;
-	}
-	if(base.n > 3 || direction.n > 3) {
-		return null;
-	}
 
-	if(base.n == 2) {
-		//handles mathnetics.point2D or Vector object
-		this.base = new mathnetics.point3D(base.get(1), base.get(2), 0);
-	} else {
-		if(base instanceof mathnetics.point3D) {
-			this.base = new mathnetics.point3D(base);
-		} else if(base instanceof Vector) {
-			this.base = new mathnetics.point3D(base.get(1), base.get(2), base.get(3));
-		}
-	}
-
-	if(direction.n == 2) {
-		this.direction = (new mathnetics.point3D(base.get(1), base.get(2), 0)).normalize();
-	} else {
-		if(direction instanceof mathnetics.point3D) {
-			this.direction = (new mathnetics.point3D(direction)).normalize();
-		} else if(direction instanceof Vector) {
-			this.direction = (new mathnetics.point3D(direction.get(1), direction.get(2), direction.get(3))).normalize();
-		}
-	}
-
-}
-
-Line.prototype = {
+mathnetics.extend(mathnetics.Line.prototype, {
 
 	/**Tests two lines for equality.  Will return true if line is parallel or antiparallel.
 	@function {public boolean} equalTo
@@ -108,7 +68,7 @@ Line.prototype = {
 		/*if(obj instanceof Plane) {
 
 		}*/
-		if(obj instanceof Line) {
+		if(obj instanceof mathnetics.Line) {
 			if(this.isParallel(obj)) {
 				return this.distanceFrom(obj.base);
 			}
@@ -147,7 +107,7 @@ Line.prototype = {
 	@param {Vector} point - a mathnetics.point2D/3D (or Vector)
 	@return the point on the original line closes to obj */
 	pointClosestTo: function(obj) {
-		if(obj instanceof Line) {
+		if(obj instanceof mathnetics.Line) {
 			if(this.intersects(obj)) {
 				return this.intersection(obj);
 			}
@@ -155,20 +115,20 @@ Line.prototype = {
 				return null;
 			}
 			var norm = this.direction.cross(obj.direction);
-			var p = new Plane(obj.base, norm);
+			var p = mathnetics.Plane.create(obj.base, norm);
 			return p.intersection(this);
 		} else if(obj.dimension()) {
 			var p = obj;
 			if(obj instanceof mathnetics.point2D) {
 				p = obj.make3D();
 			}
-			if(p instanceof Vector && p.n == 2) {
+			if(p instanceof mathnetics.Vector && p.n == 2) {
 				p = p.make3D().toPoint();
 			}
 			if(this.contains(p)) {
 				return p;
 			}
-			var plane = new Plane(p, this.direction);
+			var plane = mathnetics.Plane.create(p, this.direction);
 			return plane.intersection(this);
 		} else {
 			return null;
@@ -184,7 +144,7 @@ Line.prototype = {
 		var C = line.pointClosestTo(this.base);
 		var base = C.add(this.base.subtract(C).rotate(deg,line.direction));
 		var direction = this.direction.rotate(deg,line.direction);
-		return new Line(base, direction);
+		return mathnetics.Line.create(base, direction);
 	},
 
 	/**Returns the line's reflection in the given point, line, or plane.
@@ -197,19 +157,19 @@ Line.prototype = {
 	@param {mathnetics.point3D} point - can also be a point2D or Vector
 	@return a new line, the old one reflected in obj */
 	reflectionIn: function(obj) {
-		if(obj instanceof Plane) {
+		if(obj instanceof mathnetics.Plane) {
 			var B = this.base, D = this.direction;
 			var newB = this.base.reflectionIn(obj);
 			var BD = B.add(D);
 			var Q = obj.pointClosestTo(BD);
 			var newD = Q.multiplyBy(2).subtract(BD).subtract(newB);
-			return new Line(newB, newD);
+			return mathnetics.Line.create(newB, newD);
 		}
-		if(obj instanceof Line) {
+		if(obj instanceof mathnetics.Line) {
 			return this.rotate(Math.PI, obj);
 		}
 		if(obj.dimension()) {
-			return new Line(this.base.reflectionIn(obj), this.direction);
+			return mathnetics.Line.create(this.base.reflectionIn(obj), this.direction);
 		}
 	},
 
@@ -229,10 +189,10 @@ Line.prototype = {
 	@param {Line} line - to test for intersection with the line
 	@return true if there is a unique intersection point between the line and the given line or plane, false otherwise */
 	intersects: function(obj) {
-		if(obj instanceof Plane) {
+		if(obj instanceof mathnetics.Plane) {
 			return obj.intersects(this);
 		}
-		if(!(obj instanceof Line)) {
+		if(!(obj instanceof mathnetics.Line)) {
 			return null;
 		}
 		return (!this.isParallel(obj) && this.distanceFrom(obj) < mathnetics.zero);
@@ -246,7 +206,7 @@ Line.prototype = {
 	@param {Line} line 
 	@return the intersection point (null if obj does not intersect with line) */
 	intersection: function(obj) {
-		//if(obj instanceof Plane)
+		//if(obj instanceof mathnetics.Plane)
 		if(!this.intersects(obj)) {
 			return null;
 		}
@@ -267,7 +227,59 @@ Line.prototype = {
 	@return a new Line, the old one translated */
 	translate: function(dx, dy, dz) {
 		var base = this.base.translate(dx, dy, dz);
-		return new Line(base, this.direction);
+		return mathnetics.Line.create(base, this.direction);
+	},
+
+	/**Returns a clone of this line.
+	@function {public mathnetics.Line} dup
+	@return a new Line identical to this one */
+	dup: function() {
+		return mathnetics.Line.create(this.base, this.direction);
+	},
+	/**Sets base and direction vectors of line.  Used by constructor.
+	@function {public mathnetics.Line} setVectors
+	@paramset standard
+	@param {mathnetics.Vector} base - the base point of the Line; can be a mathnetics.point2D, mathnetics.point3D or Vector (of dimension 2 or 3) object.  The actual base point of the Line will be a point3D object.
+	@param {mathnetics.Vector} direction the direction of the Line; can be a mathnetics.point2D, mathnetics.point3D or Vector.  Actual direction will be a normalized point3D object.
+	@paramset clone
+	@param {Line} line - the line to clone as a new one
+	@return this Line with updated/reset vectors */
+	setVectors: function(base, direction) {
+
+		if(base instanceof Line) {
+			return mathnetics.Line.create(base.base, base.direction);
+		}
+
+		if(!(base.dimension() && direction.dimension())) {
+			return null;
+		}
+		if(base.n > 3 || direction.n > 3) {
+			return null;
+		}
+
+		if(base.n == 2) {
+			//handles mathnetics.point2D or Vector object
+			this.base = mathnetics.point3D.create(base.get(1), base.get(2), 0);
+		} else {
+			if(base instanceof mathnetics.point3D) {
+				this.base = mathnetics.point3D.create(base);
+			} else if(base instanceof Vector) {
+				this.base = mathnetics.point3D.create(base.get(1), base.get(2), base.get(3));
+			}
+		}
+
+		if(direction.n == 2) {
+			this.direction = (mathnetics.point3D.create(base.get(1), base.get(2), 0)).normalize();
+		} else {
+			if(direction instanceof mathnetics.point3D) {
+				this.direction = (mathnetics.point3D.create(direction)).normalize();
+			} else if(direction instanceof Vector) {
+				this.direction = (mathnetics.point3D.create(direction.get(1), direction.get(2), direction.get(3))).normalize();
+			}
+		}
+
+		return this;
+
 	},
 
 	/**Returns a string representation of the Line.
@@ -277,14 +289,27 @@ Line.prototype = {
 		return "base: " +this.base+ ", direction: " + this.direction;
 	}
 
-} //end Line prototype
+}); //end Line prototype
 
-/**The x-axis.  Base: (0,0,0), Direction: Vector.i
-@variable {public static Line} x */
-Line.x = new Line(mathnetics.point3D.zero, Vector.i);
-/**The y-axis.  Base: (0,0,0), Direction: Vector.j
-@variable {public static Line} y */
-Line.y = new Line(mathnetics.point3D.zero, Vector.j);
-/**The z-axis.  Base: (0,0,0), Direction: Vector.k
-@variable {public static Line} z */
-Line.z = new Line(mathnetics.point3D.zero, Vector.k);
+/**The constructor function for a new Line.  If only a Line object is supplied as a parameter, a duplicate of that Line will be created.
+@constructor mathnetics.Line 
+@see mathnetics.Line.setVectors*/
+mathnetics.Line.create = function(base, direction) {
+	var L = new mathnetics.Line();
+	if(!direction) return L.setVectors(base.base, direction.direction);
+	return L.setVectors(base, direction);
+};
+
+mathnetics.extend(mathnetics.Line, {
+
+	/**The x-axis.  Base: (0,0,0), Direction: Vector.i
+	@variable {public static Line} x */
+	x: mathnetics.Line.create(mathnetics.point3D.zero, Vector.i),
+	/**The y-axis.  Base: (0,0,0), Direction: Vector.j
+	@variable {public static Line} y */
+	y: mathnetics.Line.create(mathnetics.point3D.zero, Vector.j),
+	/**The z-axis.  Base: (0,0,0), Direction: Vector.k
+	@variable {public static Line} z */
+	z: mathnetics.Line.create(mathnetics.point3D.zero, Vector.k)
+
+});
