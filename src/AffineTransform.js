@@ -279,7 +279,7 @@ mathnetics.AffineTransform.prototype = {
 		var AT = mathnetics.AffineTransform.create(this.dim);
 		AT.matrix = this.matrix.dup();
 		return AT;
-	}
+	},
 
 	/**Returns a string representation of the Affine Transformation matrix.
 	@function {public String} toString
