@@ -29,7 +29,7 @@ mathnetics.point3D = function() {
 	this.components = [this.x, this.y, this.z, 1];
 };
 
-mathnetics.extend(mathnetics.point3D.prototype, new mathnetics.Vector);
+mathnetics.point3D.prototype = new mathnetics.Vector;
 
 mathnetics.extend(mathnetics.point3D.prototype, {
 

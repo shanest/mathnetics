@@ -42,7 +42,7 @@ mathnetics.AffineTransform = function() {
 
 }
 
-mathnetics.extend(mathnetics.AffineTransform.prototype, {
+mathnetics.AffineTransform.prototype = {
 
 	/**Applies the transformation to a {@link mathnetics.point2D} or {@link mathnetics.point3D} object.
 	@function {public Object} applyTo
@@ -289,7 +289,7 @@ mathnetics.extend(mathnetics.AffineTransform.prototype, {
 		return this.matrix.toString();
 	}
 
-}); //end AffineTransform prototype
+}; //end AffineTransform prototype
 
 /**Construct a new AffineTransform object, which contains a dimension, a transformation matrix (set by instance methods), and the applyTo method. Note, calling new mathnetics.AffineTransform() and then setting dim works.
 @param {int} dim - the dimension (2 or 3) of the Affine Transformation.

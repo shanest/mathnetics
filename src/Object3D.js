@@ -25,7 +25,7 @@ mathnetics.Object3D = function() {
 	this.faces = new Array();
 };
 
-mathnetics.extend(mathnetics.Object3D.prototype, {
+mathnetics.Object3D.prototype = {
 
 	/**Adds a face to the 3D Object.
 	@function {public mathnetics.Object3D} addFace
@@ -150,7 +150,7 @@ mathnetics.extend(mathnetics.Object3D.prototype, {
 		return "vertices: \n" + this.vertices.join("\n") + "\n\nfaces: \n" + this.faces.join("\n");
 	}
 
-}); //end Object3D prototype
+}; //end Object3D prototype
 
 /**Creates a new 3D Object.
 @param {mathnetics.point3D[]} vertices

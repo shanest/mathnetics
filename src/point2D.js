@@ -26,7 +26,7 @@ mathnetics.point2D = function() {
 	this.components = [this.x, this.y, 1];
 };
 
-mathnetics.extend(mathnetics.point2D.prototype, new mathnetics.Vector);
+mathnetics.point2D.prototype = new mathnetics.Vector;
 
 mathnetics.extend(mathnetics.point2D.prototype, {
 

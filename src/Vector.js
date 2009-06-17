@@ -17,7 +17,7 @@ mathnetics.Vector = function() {
 	this.n = this.components.length;
 };
 
-mathnetics.extend(mathnetics.Vector.prototype, {
+mathnetics.Vector.prototype = {
 
 	/**Gets the component of the vector at index.
 	@function {public Number} get
@@ -477,7 +477,7 @@ mathnetics.extend(mathnetics.Vector.prototype, {
 		return "[" + this.components.join(" ") + "]";
 	}
 
-}); //end Vector prototype
+}; //end Vector prototype
 
 /**Constructor function.  Takes an Array or a Vector and creates a Vector object.
 @constructor mathnetics.Vector.create 

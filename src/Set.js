@@ -15,7 +15,7 @@ mathnetics.Set = function() {
 	this.cardinality = 0;
 };
 
-mathnetics.extend(mathnetics.Set.prototype, {
+mathnetics.Set.prototype = {
 
 
 	/**Determines if a specified element is in the set of this group.
@@ -252,7 +252,7 @@ mathnetics.extend(mathnetics.Set.prototype, {
 		return "{" + this.elements.join(" ") + "}";
 	}
 
-}); //end Set prototype
+}; //end Set prototype
 
 /**Constructor function for a new set. If no parameters supplied, constructs an empty (null) set
 @constructor mathnetics.Set.create 

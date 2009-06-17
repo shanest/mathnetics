@@ -33,15 +33,7 @@ mathnetics.Group = function() {
 	this.identity;
 };
 
-/**Generator function for a new group (mathematical).
-@param {Function} operator - if a function, must take two parameters (elements of the set); if a string: 'addition' or 'multiplication'
-@constructor Group
-*/
-function Group(elements, operator) {
-
-}
-
-mathnetics.extend(mathnetics.Group.prototype, {
+mathnetics.Group.prototype = {
 
 
 	/**Determines if the group does or does not have closure and sets the boolean hasClosure.
@@ -247,7 +239,7 @@ mathnetics.extend(mathnetics.Group.prototype, {
 		return mathnetics.Group.create(this.set, this.operation);
 	}
 
-}); //end Group prototype
+}; //end Group prototype
 
 mathnetics.Group.create = function(elements, operator) {
 	var G = new mathnetics.Group();

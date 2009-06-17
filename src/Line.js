@@ -21,7 +21,7 @@ mathnetics.Line = function() {
 };
 
 
-mathnetics.extend(mathnetics.Line.prototype, {
+mathnetics.Line.prototype = {
 
 	/**Tests two lines for equality.  Will return true if line is parallel or antiparallel.
 	@function {public boolean} equalTo
@@ -290,7 +290,7 @@ mathnetics.extend(mathnetics.Line.prototype, {
 		return "base: " +this.base+ ", direction: " + this.direction;
 	}
 
-}); //end Line prototype
+}; //end Line prototype
 
 /**The constructor function for a new Line.  If only a Line object is supplied as a parameter, a duplicate of that Line will be created.
 @constructor mathnetics.Line.create 

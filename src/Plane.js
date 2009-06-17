@@ -18,7 +18,7 @@ mathnetics.Plane = function() {
 	this.norm = new mathnetics.point3D(0,0,0);
 };
 
-mathnetics.extend(mathnetics.Plane.prototype, {
+mathnetics.Plane.prototype = {
 
 	/**Tests whether two planes are equal.
 	@function {public boolean} equalTo
@@ -254,7 +254,7 @@ mathnetics.extend(mathnetics.Plane.prototype, {
 		return "base: " + this.base + ", normal: " + this.norm;
 	}
 
-}); //end Plane prototype
+}; //end Plane prototype
 
 /**The constructor function for a new Plane.
 @constructor mathnetics.Plane.create 

@@ -14,7 +14,7 @@ mathnetics.Matrix = function() {
 	this.components = new Array();
 };
 
-mathnetics.extend(mathnetics.Matrix.prototype, {
+mathnetics.Matrix.prototype = {
 
 	/**Returns the i,j'th element of the matrix. Because (i,j) element is this.components[i-1].components[j-1], this method is especially uesful as shorthand.
 	@function {public Number} get
@@ -532,7 +532,7 @@ mathnetics.extend(mathnetics.Matrix.prototype, {
 		return this.components.join("\n");
 	}
 
-}); //end Matrix prototype
+}; //end Matrix prototype
 
 /**Creates a new matrix according to setElements.
 @constructor mathnetics.Matrix.create
